@@ -6,6 +6,7 @@ Created on Mon Jan 27 14:06:14 2025
 @author: natalia
 """
 
+# Git test
 # Importing MPI module to eneable parallel processing
 from mpi4py import MPI
 
