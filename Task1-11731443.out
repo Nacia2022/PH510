@@ -1,0 +1,29 @@
+===================================================================================
+SLURM Job ID:            11731443
+Submit time:             Sun Feb 09 22:15:49 GMT 2025 (Unix Epoch time: 1739139349)
+Start time:              Sun Feb 09 22:15:49 GMT 2025 (Unix Epoch time: 1739139349)
+No. nodes:               1
+No. tasks:               1
+Job name:                Task1
+Account:                 teaching
+QoS:                     teaching
+Partition (queue):       teaching-gpu
+Submit directory:        /users/qnb20123/PH510_2/PH510
+Script name:             /users/qnb20123/PH510_2/PH510/Task1.sh
+Master node:             weegpu4
+Nodes used:              weegpu4
+Task distribution:       
+===================================================================================
+
+
+--------------------------------------------------------------------
+Your code has been rated at 10.00/10 (previous run: 10.00/10, +0.00)
+
+Integral = 3.141592653598167
+Total time (seconds) = 0.024970531463623047
+===================================================================================
+SLURM job 11731443 ended:     Sun Feb 09 22:13:37 GMT 2025 (Unix Epoch time: 1739139217)
+This is an estimated end time using the 'date' command from node weegpu4.hpc.strath.ac.uk
+For accurate timings, use 'sacct -j 11731443 -X --format=Submit,Start,End,Elapsed'
+======================================================================================
+slurmstepd: error: Pid 1045514 is still in the freezer job cgroup.  It might be left uncleaned after the job.
