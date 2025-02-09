@@ -29,7 +29,7 @@
 #SBATCH --output=Task1-%j.out
 #======================================================
 
-module purgde
+module purge
 
 #Example module load command. 
 #Load any modules appropriate for your program's requirements
