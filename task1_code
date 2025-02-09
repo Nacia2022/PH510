@@ -7,7 +7,9 @@ Created on Mon Jan 27 14:06:14 2025
 """
 
 # Importing MPI module to eneable parallel processing
+import time
 from mpi4py import MPI
+
 
 # Initializing communication in MPI
 comm = MPI.COMM_WORLD
@@ -37,6 +39,7 @@ DIV_N = N // size
 start = rank * DIV_N
 end = start + DIV_N
 
+time1 = time.time()
 # Divides integral sum
 DIV_INT = 0.0  # Initialize
 for i in range(start, end):
@@ -50,7 +53,13 @@ TOTAL_INT = comm.reduce(DIV_INT, op=MPI.SUM, root=0)
 if rank == 0:
     print(f"Integral = {TOTAL_INT:.15f}")
 
-# PREVIOUS VERSION
+time2 = time.time()
+
+time = time2 - time1
+
+print("Total time (seconds) =", time)
+
+# PREVIOUS VERSION ######################################################
 # Check if process is rank 0
 # if comm.Get_rank() == 0:
 
