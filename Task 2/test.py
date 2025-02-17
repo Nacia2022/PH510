@@ -7,11 +7,16 @@ import vector as vec
 
 # Adding vlues to the components
 
-v1 = vec.Vector(2, 10)
-v2 = vec.Vector(5, -2)
+v1 = vec.Vector(2, 10, -7)
+v2 = vec.Vector(5, -2, 9)
 
 
 # Print values
-print("first vector", v1)
-print("second vector", v2)
-print("sum of vectors:", v1 + v2)
+print("First vector", v1)
+print("Second vector", v2)
+print("Sum of vectors:", v1 + v2)
+print("Difference of vectors:", v1 - v2)
+print("Magnitude vector 1 = ", v1.mag())
+print("Magnitude vector 2 = ", v2.mag())
+print("Dot product = ", v1.dot(v2))
+print("Cross product = ", v1.cross(v2))

@@ -12,7 +12,7 @@ import math
 
 
 class Vector:
-    """Vector class for two dimensional quantities (2D vector)."""
+    """Vector class for three dimensional quantities (3D vector)."""
 
     def __init__(self, x_arg, y_arg, z_arg):
         """Initialize a vector with components x and b."""
@@ -29,10 +29,48 @@ class Vector:
         return Vector(self.x_arg + other.x_arg, self.y_arg + other.y_arg,
                       self.z_arg + other.z_arg)
 
-    def __mag__(self):
+    def __sub__(self, other):
+        """Overloads subtraction for the elements of two instances."""
+        return Vector(self.x_arg - other.x_arg, self.y_arg - other.y_arg,
+                      self.z_arg - other.z_arg)
+
+    def mag(self):
         """Obtain the magnitude of vector."""
         return math.sqrt(self.x_arg**2 + self.y_arg**2 + self.z_arg**2)
 
-    def __dot__(self, other):
-        """Obtain scalar (dot) ptoduct of 2 vectors."""
+    def dot(self, other):
+        """Obtain scalar (dot) product of 2 vectors."""
         return self.x_arg * other.x_arg + self.y_arg * other.y_arg + self.z_arg * other.z_arg
+
+    def cross(self, other):
+        """Obtain vector (cross) product of 2 vectors."""
+        cross_x = (self.y_arg * other.z_arg) - (self.z_arg * other.y_arg)
+        cross_y = (self.z_arg * other.x_arg) - (self.x_arg * other.z_arg)
+        cross_z = (self.x_arg * other.y_arg) - (self.y_arg * other.x_arg)
+        return (cross_x, cross_y, cross_z)
+
+
+# Spherical Vector ############################################################
+
+# Spherical-Polar form
+
+
+class VectorSpherical:
+    """Spherical vector class for 3D vector in spherical-polar cooridanates."""
+
+    def __init__(self, r_mag, theta, phi):
+        """Initialize a vector with spherical coordinates."""
+        self.r_mag = r_mag
+        self.theta = theta
+        self.phi = phi
+
+
+
+
+
+
+
+
+
+
+
