@@ -54,15 +54,46 @@ class Vector:
 
 # Spherical-Polar form
 
+class VectorSpherical(Vector):
+    """
+    Spherical vector class for 3D vector in spherical-polar cooridanates.
 
-class VectorSpherical:
-    """Spherical vector class for 3D vector in spherical-polar cooridanates."""
+    Coordinates:
+        r_mag: magnitude of radius
+        theta: polar angle in radians
+        phi: azimuthal angle in radians
+    """
 
     def __init__(self, r_mag, theta, phi):
         """Initialize a vector with spherical coordinates."""
         self.r_mag = r_mag
         self.theta = theta
         self.phi = phi
+
+        # Change to cartesian coordinates
+        x = r_mag * math.sin(theta) * math.cos(phi)
+        y = r_mag * math.sin(theta) * math.sin(phi)
+        z = r_mag * math.cos(theta)
+
+        # Initialize
+        super().__init__(x, y, z)
+
+    def __str__(self):
+        """Return the spherical coordinates."""
+        return f"VectorSpherical(r_mag={self.r_mag:.2f}, theta={math.degrees(self.theta):.2f}, phi={math.degrees(self.phi):.2f})"
+
+    def to_cart(self):
+        """Convert to cartesian coordintes."""
+        return Vector(self.x_arg, self.y_arg, self.z_arg)
+
+    def from_cart(cls, vector: Vector):
+        """Convert to spherical coordinates."""
+        r_mag = vector.magnitude
+        theta = math.acos(vector.z / r_mag) if r_mag!=0 else 0
+        phi = math.atan2(vector.y, vector.x)
+        return cls(r_mag, theta, phi)
+
+
 
 
 

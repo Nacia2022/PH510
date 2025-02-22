@@ -4,6 +4,7 @@
 """Use the vector class to do something simple."""
 
 import vector as vec
+import math
 
 # Adding vlues to the components
 
@@ -20,3 +21,12 @@ print("Magnitude vector 1 = ", v1.mag())
 print("Magnitude vector 2 = ", v2.mag())
 print("Dot product = ", v1.dot(v2))
 print("Cross product = ", v1.cross(v2))
+
+# Spherical coordinate test
+
+# New spherical vector
+vsph = vec.VectorSpherical(7, math.radians(30), math.radians(45))
+
+# Print new values
+print("\nSpherical Vector:", vsph)
+print("In Cartesian coordinates:", vsph.to_cart())
