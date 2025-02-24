@@ -58,7 +58,7 @@ print("Magnitude:", vsph1.mag())
 
 # Task 3 a
 
-def tri_area(A:vec.Vector, B:vec.Vector, C:vec.Vector):
+def tri_area(A, B, C):
     """Get area of given triangle with three vectors."""
     # AB = Vector(C.x_arg, B.z_)
     AB = B - A
@@ -67,38 +67,53 @@ def tri_area(A:vec.Vector, B:vec.Vector, C:vec.Vector):
     return 0.5*cross.mag()
 
 
-# def tri_angle(A: vec.Vector, B: vec.Vector, C: vec.Vector):
-#     """Get angles of the triangle"""
-#     AB = B - A
-#     AC = C - A
-#     BC = C - B
+def tri_angle(A, B, C):
+    """Get angles of the triangle."""
+    AB = B - A
+    AC = C - A
+    BA = C - B
+    # BC = C - B
+    # CA = A - C
+    # CB = B - C
 
-#     return ang_A, ang_B, ang_C
+    ang_A = AB.ang(AC)
+    ang_B = (-AB).ang(BA)
+    ang_C = (-AC).ang(-BA)
+    # ang_D = BC.ang(CA)
+    # ang_E = BC.ang(CB)
+    # ang_F = CA.ang(CB)
+
+    return ang_A, ang_B, ang_C  #, ang_D, ang_E, ang_F
+
 
 # Triangle 1
 A_1, B_1, C_1 = [vec.Vector(0, 0, 0), vec.Vector(1, 0, 0), vec.Vector(0, 1, 0)]
 area1 = tri_area(A_1, B_1, C_1)
+ang1 = tri_angle(A_1, B_1, C_1)
 
 # Triangle 1
 A_2, B_2, C_2 = [vec.Vector(-1, -1, -1), vec.Vector(0, -1, -1), vec.Vector(-1, 0, -1)]
 area2 = tri_area(A_2, B_2, C_2)
+ang2 = tri_angle(A_2, B_2, C_2)
 
 # Triangle 1
 A_3, B_3, C_3 = [vec.Vector(1, 0, 0), vec.Vector(0, 0, 1), vec.Vector(0, 0, 0)]
 area3 = tri_area(A_3, B_3, C_3)
+ang3 = tri_angle(A_3, B_3, C_3)
 
 # Triangle 1
 A_4, B_4, C_4 = [vec.Vector(0, 0, 0), vec.Vector(1, -1, 0), vec.Vector(0, 0, 1)]
 area4 = tri_area(A_4, B_4, C_4)
+ang4 = tri_angle(A_4, B_4, C_4)
 
 
 
 # Print results for task 3
 print("\nTasks 3  ..............................................")
-print(f"\nTriangle 1 Area: {area1:.4f}")
-print(f"\nTriangle 2 Area: {area2:.4f}")
-print(f"\nTriangle 3 Area: {area3:.4f}")
-print(f"\nTriangle 4 Area: {area4:.4f}")
+print(f"\nTriangle 1 Area: {area1:.4f} \nAngles: {ang1}")
+print(f"\nTriangle 2 Area: {area2:.4f} \nAngles: {ang2}")
+print(f"\nTriangle 3 Area: {area3:.4f} \nAngles: {ang3}")
+print(f"\nTriangle 4 Area: {area4:.4f} \nAngles: {ang4}")
 # print(f"\nTriangle Area:{tri_area(tri_1):.4f}")
 
 
