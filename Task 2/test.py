@@ -6,6 +6,7 @@
 import math
 import vector as vec
 
+# Task 1a-e
 # Adding vlues to the components
 
 # v1 = vec.Vector(2, 10, -7)
@@ -29,7 +30,7 @@ print("Magnitude vector 2 = ", v2.mag())
 print("Dot product = ", v1.dot(v2))
 print("Cross product = ", v1.cross(v2))
 
-# Spherical coordinate test
+# Task 2a-e
 
 # New spherical vectors
 vsph1 = vec.VectorSpherical(1, math.radians(0), math.radians(0))
@@ -44,17 +45,6 @@ vsph5 = vec.VectorSpherical.to_sph(v1)  # Convert v1 to spherical coordinates
 # Print results for task 2a-e
 print("\nTasks 2 a-e ..............................................")
 print("\nVector vsph1 in Cartesian coordinates:", vsph1.to_cart())
-print("\nVector v1 in Spherical coordinates:", vsph5)
-
-# print("\nvsph3 spherical", vsph3)
-# print("\nSum of vectors:", vsph1 + vsph2)
-
-# vsph8 = vec.VectorSpherical.to_sph(v7)
-# v8 = vsph4.dot(vsph5)
-# v9 = vsph1.cross(vsph5)
-
-# Printing results for task 2a-e
-
 print("\nSpherical Vector vsph1", vsph1)
 print("\nSpherical Vector vsph2", vsph2)
 print("\nSpherical Vector vsph3 check", vsph3)
@@ -64,3 +54,53 @@ print("Difference of vectors:", vsph1 - vsph2)
 print("Cross product of vectors:", vsph1.cross(vsph2))
 print("Dot product of vectors:", vsph1.dot(vsph2))
 print("Magnitude:", vsph1.mag())
+
+
+# Task 3 a
+
+def tri_area(A:vec.Vector, B:vec.Vector, C:vec.Vector):
+    """Get area of given triangle with three vectors."""
+    # AB = Vector(C.x_arg, B.z_)
+    AB = B - A
+    AC = C - A
+    cross = AB.cross(AC)
+    return 0.5*cross.mag()
+
+
+# def tri_angle(A: vec.Vector, B: vec.Vector, C: vec.Vector):
+#     """Get angles of the triangle"""
+#     AB = B - A
+#     AC = C - A
+#     BC = C - B
+
+#     return ang_A, ang_B, ang_C
+
+# Triangle 1
+A_1, B_1, C_1 = [vec.Vector(0, 0, 0), vec.Vector(1, 0, 0), vec.Vector(0, 1, 0)]
+area1 = tri_area(A_1, B_1, C_1)
+
+# Triangle 1
+A_2, B_2, C_2 = [vec.Vector(-1, -1, -1), vec.Vector(0, -1, -1), vec.Vector(-1, 0, -1)]
+area2 = tri_area(A_2, B_2, C_2)
+
+# Triangle 1
+A_3, B_3, C_3 = [vec.Vector(1, 0, 0), vec.Vector(0, 0, 1), vec.Vector(0, 0, 0)]
+area3 = tri_area(A_3, B_3, C_3)
+
+# Triangle 1
+A_4, B_4, C_4 = [vec.Vector(0, 0, 0), vec.Vector(1, -1, 0), vec.Vector(0, 0, 1)]
+area4 = tri_area(A_4, B_4, C_4)
+
+
+
+# Print results for task 3
+print("\nTasks 3  ..............................................")
+print(f"\nTriangle 1 Area: {area1:.4f}")
+print(f"\nTriangle 2 Area: {area2:.4f}")
+print(f"\nTriangle 3 Area: {area3:.4f}")
+print(f"\nTriangle 4 Area: {area4:.4f}")
+# print(f"\nTriangle Area:{tri_area(tri_1):.4f}")
+
+
+
+

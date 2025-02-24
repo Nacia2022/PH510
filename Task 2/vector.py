@@ -50,6 +50,38 @@ class Vector:
         cross_z = (self.x_arg * other.y_arg) - (self.y_arg * other.x_arg)
         return Vector(cross_x, cross_y, cross_z)
 
+    def ang(self, other):
+        """Get angle between two vectors."""
+        dot = self.dot(other)
+        mags = self.mag() * other.mag()
+        ang_rad = math.acos(dot / mags)
+        return math.degrees(ang_rad)
+
+    # def tri_area(A, B, C):
+    #     """Get area of given triangle with three vectors."""
+    #     # AB = Vector(C.x_arg, B.z_)
+    #     AB = B - A
+    #     AC = C - A
+    #     area = 0.5*AB.cross(AC)
+    #     return area
+
+    def tri_angle(A, B, C):
+        """Get angles of the triangle."""
+        AB = B - A
+        AC = C - A
+        BA = A - B
+        BC = C - B
+        CA = A - C
+        CB = B - C
+
+        ang_A = AB.ang(AC)
+        ang_B = AB.ang(BA)
+        ang_C = AC.ang(BA)
+        ang_D = BC.ang(CA)
+        ang_E = BC.ang(CB)
+        ang_F = CA.ang(CB)
+
+        return ang_A, ang_B, ang_C, ang_D, ang_E, ang_F
 
 # Spherical Vector ############################################################
 
