@@ -22,7 +22,7 @@ class Vector:
 
     def __str__(self):
         """Assumes floating point when printing."""
-        return f"Vector: ({self.x_arg:.2f}, {self.y_arg:.2f}, {self.z_arg:.2f})"
+        return f"Vector:({self.x_arg:.2f}, {self.y_arg:.2f}, {self.z_arg:.2f})"
 
     def __add__(self, other):
         """Overloads addition for the elements of two instances."""
@@ -40,7 +40,8 @@ class Vector:
 
     def dot(self, other):
         """Obtain scalar (dot) product of 2 vectors."""
-        return self.x_arg * other.x_arg + self.y_arg * other.y_arg + self.z_arg * other.z_arg
+        return (self.x_arg * other.x_arg + self.y_arg * other.y_arg +
+                self.z_arg * other.z_arg)
 
     def cross(self, other):
         """Obtain vector (cross) product of 2 vectors."""
@@ -70,28 +71,80 @@ class VectorSpherical(Vector):
         self.theta = theta
         self.phi = phi
 
-        # Change to cartesian coordinates
-        x = r_mag * math.sin(theta) * math.cos(phi)
-        y = r_mag * math.sin(theta) * math.sin(phi)
-        z = r_mag * math.cos(theta)
+        # x_arg = r_mag * math.sin(theta) * math.cos(phi)
+        # y_arg = r_mag * math.sin(theta) * math.sin(phi)
+        # z_arg = r_mag * math.cos(theta)
 
-        # Initialize
-        super().__init__(x, y, z)
+        x_arg, y_arg, z_arg = self.to_cart()
+        # Initialize with super to avoid referring to base class explocotly and
+        # to make the child class inherit all the methods and properties.
+        # from its parent
+        super().__init__(x_arg, y_arg, z_arg)
+
+    # Degrees version
+    # def __str__(self):
+    #    """Return the spherical coordinates with theta and phi in degrees."""
+    #    return f"({self.r_mag:.2f}, {math.degrees(self.theta):.2f}, {math.degrees(self.phi):.2f})"
 
     def __str__(self):
-        """Return the spherical coordinates."""
-        return f"VectorSpherical(r_mag={self.r_mag:.2f}, theta={math.degrees(self.theta):.2f}, phi={math.degrees(self.phi):.2f})"
+        """Return spherical coordinates with theta and phi in radians."""
+        return f"({self.r_mag:.2f}, {self.theta:.2f}, {self.phi:.2f})"
 
     def to_cart(self):
         """Convert to cartesian coordintes."""
-        return Vector(self.x_arg, self.y_arg, self.z_arg)
+        x_arg = self.r_mag * math.sin(self.theta) * math.cos(self.phi)
+        y_arg = self.r_mag * math.sin(self.theta) * math.sin(self.phi)
+        z_arg = self.r_mag * math.cos(self.theta)
+        return (x_arg, y_arg, z_arg)
+        # return Vector(self.x_arg, self.y_arg, self.z_arg)
+        # Inherited from Vector class so need to use _arg version
+        # return Vector(self.x, self.y, self.z)
 
-    def from_cart(cls, vector: Vector):
-        """Convert to spherical coordinates."""
-        r_mag = vector.magnitude
-        theta = math.acos(vector.z / r_mag) if r_mag!=0 else 0
-        phi = math.atan2(vector.y, vector.x)
+    # Dont want to use self - i want to refer to the class itself
+    @classmethod  # converts function to be a class method. This is the new
+    # version. Previous: classmethod(function).
+    def to_sph(cls, vector: Vector):
+        """Convert to spherical coordinates. Classmethod (cls, arg1, ...)."""
+        r_mag = vector.mag()
+        theta = math.acos(vector.z_arg / r_mag)
+        phi = math.atan2(vector.y_arg, vector.x_arg)
         return cls(r_mag, theta, phi)
+
+    def mag_sph(self):
+        """Return r_mag - the magnitude of the spherical vector."""
+        return self.r_mag
+
+    def __add__(self, other):
+        """Convert to cartesian then add two spherical vectors."""
+        # v1 = Vector(*self.to_cart())
+        # v2 = Vector(*other.to_cart())
+        # cart_sum = v1 + v2
+        # return VectorSpherical.to_sph(cart_sum)
+        cart_sum = Vector(self.x_arg + other.x_arg,
+                                   self.y_arg + other.y_arg,
+                                   self.z_arg + other.z_arg)
+        return VectorSpherical.to_sph(cart_sum)
+
+    # def __sub__(self, other):
+    #     """Overloads subtraction for the elements of two instances."""
+    #     return Vector(self.x_arg - other.x_arg, self.y_arg - other.y_arg,
+    #                   self.z_arg - other.z_arg)
+
+    # def mag(self):
+    #     """Obtain the magnitude of vector."""
+    #     return math.sqrt(self.x_arg**2 + self.y_arg**2 + self.z_arg**2)
+
+    # def dot(self, other):
+    #     """Obtain scalar (dot) product of 2 vectors."""
+    #     return self.x_arg * other.x_arg + self.y_arg * other.y_arg + self.z_arg * other.z_arg
+
+    # def cross(self, other):
+    #     """Obtain vector (cross) product of 2 vectors."""
+    #     cross_x = (self.y_arg * other.z_arg) - (self.z_arg * other.y_arg)
+    #     cross_y = (self.z_arg * other.x_arg) - (self.x_arg * other.z_arg)
+    #     cross_z = (self.x_arg * other.y_arg) - (self.y_arg * other.x_arg)
+    #     return (cross_x, cross_y, cross_z)
+
 
 
 
