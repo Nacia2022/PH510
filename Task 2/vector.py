@@ -48,7 +48,7 @@ class Vector:
         cross_x = (self.y_arg * other.z_arg) - (self.z_arg * other.y_arg)
         cross_y = (self.z_arg * other.x_arg) - (self.x_arg * other.z_arg)
         cross_z = (self.x_arg * other.y_arg) - (self.y_arg * other.x_arg)
-        return (cross_x, cross_y, cross_z)
+        return Vector(cross_x, cross_y, cross_z)
 
 
 # Spherical Vector ############################################################
@@ -82,13 +82,13 @@ class VectorSpherical(Vector):
         super().__init__(x_arg, y_arg, z_arg)
 
     # Degrees version
-    # def __str__(self):
-    #    """Return the spherical coordinates with theta and phi in degrees."""
-    #    return f"({self.r_mag:.2f}, {math.degrees(self.theta):.2f}, {math.degrees(self.phi):.2f})"
-
     def __str__(self):
-        """Return spherical coordinates with theta and phi in radians."""
-        return f"({self.r_mag:.2f}, {self.theta:.2f}, {self.phi:.2f})"
+        """Return the spherical coordinates with theta and phi in degrees."""
+        return f"({self.r_mag:.2f}, {math.degrees(self.theta):.2f}, {math.degrees(self.phi):.2f})"
+
+    # def __str__(self):
+    #     """Return spherical coordinates with theta and phi in radians."""
+    #     return f"({self.r_mag:.2f}, {self.theta:.2f}, {self.phi:.2f})"
 
     def to_cart(self):
         """Convert to cartesian coordintes."""
@@ -103,20 +103,20 @@ class VectorSpherical(Vector):
     # Dont want to use self - i want to refer to the class itself
     @classmethod  # converts function to be a class method. This is the new
     # version. Previous: classmethod(function).
-    def to_sph(cls, vector: Vector):
+    def to_sph(cls, vector):
         """Convert to spherical coordinates. Classmethod (cls, arg1, ...)."""
-        # r_mag = vector.mag()
-        r_mag = math.sqrt(vector.x_arg**2 + vector.y_arg**2 + vector.z_arg**2)
+        r_mag = vector.mag()
+        # r_mag = math.sqrt(vector.x_arg**2 + vector.y_arg**2 + vector.z_arg**2)
         theta = math.acos(vector.z_arg / r_mag)
         phi = math.atan2(vector.y_arg, vector.x_arg)
         return cls(r_mag, theta, phi)
 
-    def mag_sph(self):
-        """Return r_mag - the magnitude of the spherical vector."""
-        return self.r_mag
+    # def mag_sph(self):
+    #    """Return r_mag - the magnitude of the spherical vector."""
+    #    return self.r_mag
 
     def __add__(self, other):
-        """Convert to cartesian then add two spherical vectors."""
+        """Convert spherical to cartesian then add two spherical vectors."""
         v1 = Vector(*self.to_cart())
         v2 = Vector(*other.to_cart())
         cart_sum = v1 + v2
@@ -128,25 +128,29 @@ class VectorSpherical(Vector):
         #                           self.z_arg + other.z_arg)
         # return VectorSpherical.to_sph(cart_sum)
 
-    # def __sub__(self, other):
-    #     """Overloads subtraction for the elements of two instances."""
-    #     return Vector(self.x_arg - other.x_arg, self.y_arg - other.y_arg,
-    #                   self.z_arg - other.z_arg)
+    def __sub__(self, other):
+        """Convert sphercal to cartesian then subtract the convert back."""
+        v1 = Vector(*self.to_cart())
+        v2 = Vector(*other.to_cart())
+        cart_diff = v1 - v2
+        return VectorSpherical.to_sph(cart_diff)
 
-    # def mag(self):
-    #     """Obtain the magnitude of vector."""
-    #     return math.sqrt(self.x_arg**2 + self.y_arg**2 + self.z_arg**2)
+    def mag(self):
+        """Obtain the magnitude of vector."""
+        return math.sqrt(self.x_arg**2 + self.y_arg**2 + self.z_arg**2)
 
     # def dot(self, other):
     #     """Obtain scalar (dot) product of 2 vectors."""
-    #     return self.x_arg * other.x_arg + self.y_arg * other.y_arg + self.z_arg * other.z_arg
+    #     v1 = Vector(*self.to_cart())
+    #     v2 = Vector(*other.to_cart())
+    #     return VectorSpherical.to_sph(v1.dot(v2))
 
-    # def cross(self, other):
-    #     """Obtain vector (cross) product of 2 vectors."""
-    #     cross_x = (self.y_arg * other.z_arg) - (self.z_arg * other.y_arg)
-    #     cross_y = (self.z_arg * other.x_arg) - (self.x_arg * other.z_arg)
-    #     cross_z = (self.x_arg * other.y_arg) - (self.y_arg * other.x_arg)
-    #     return (cross_x, cross_y, cross_z)
+    def cross(self, other):
+        """Obtain vector (cross) product of 2 vectors."""
+        v1 = Vector(*self.to_cart())
+        v2 = Vector(*other.to_cart())
+        cart_cross = v1.cross(v2)
+        return VectorSpherical.to_sph(cart_cross)
 
 
 
