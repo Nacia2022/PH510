@@ -57,35 +57,12 @@ class Vector:
         ang_rad = math.acos(dot / mags)
         return math.degrees(ang_rad)
 
-    # def tri_area(A, B, C):
-    #     """Get area of given triangle with three vectors."""
-    #     # AB = Vector(C.x_arg, B.z_)
-    #     AB = B - A
-    #     AC = C - A
-    #     area = 0.5*AB.cross(AC)
-    #     return area
+    def __neg__(self):
+        """Return negative vector."""
+        return Vector(-self.x_arg, -self.y_arg, -self.z_arg)
 
-    # def tri_angle(A, B, C):
-    #     """Get angles of the triangle."""
-    #     AB = B - A
-    #     AC = C - A
-    #     BA = A - B
-    #     BC = C - B
-    #     CA = A - C
-    #     CB = B - C
-
-    #     ang_A = AB.ang(AC)
-    #     ang_B = AB.ang(BA)
-    #     ang_C = AC.ang(BA)
-    #     ang_D = BC.ang(CA)
-    #     ang_E = BC.ang(CB)
-    #     ang_F = CA.ang(CB)
-
-    #     return ang_A, ang_B, ang_C, ang_D, ang_E, ang_F
 
 # Spherical Vector ############################################################
-
-# Spherical-Polar form
 
 class VectorSpherical(Vector):
     """

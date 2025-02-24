@@ -110,10 +110,11 @@ ang4 = tri_angle(A_4, B_4, C_4)
 
 # Print results for task 3
 print("\nTasks 3  ..............................................")
-print(f"\nTriangle 1 Area: {area1:.4f} \nAngles: {ang1}")
-print(f"\nTriangle 2 Area: {area2:.4f} \nAngles: {ang2}")
-print(f"\nTriangle 3 Area: {area3:.4f} \nAngles: {ang3}")
-print(f"\nTriangle 4 Area: {area4:.4f} \nAngles: {ang4}")
+print(f"""\nTriangle 1 Area: {area1:.4f}
+Angles: {ang1[0]:.2f}°, {ang1[1]:.2f}°, {ang1[2]:.2f}°""")
+print(f"\nTriangle 2 Area: {area2:.4f} \nAngles: {ang2[0]:.2f}°, {ang2[1]:.2f}°, {ang2[2]:.2f}°")
+print(f"\nTriangle 3 Area: {area3:.4f} \nAngles: {ang3[0]:.2f}°, {ang3[1]:.2f}°, {ang3[2]:.2f}°")
+print(f"\nTriangle 4 Area: {area4:.4f} \nAngles: {ang4[0]:.2f}°, {ang4[1]:.2f}°, {ang4[2]:.2f}°")
 # print(f"\nTriangle Area:{tri_area(tri_1):.4f}")
 
 
