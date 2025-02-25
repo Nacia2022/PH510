@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+"""
+Created on Tue Feb 15 2025
+
+@author: natalia
+
+Liceanse availible in repository
+"""
 
 """Toy example code for a very simple object oriented class of vectors."""
 

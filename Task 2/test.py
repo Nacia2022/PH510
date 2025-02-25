@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+"""
+Created on Tue Feb 15 2025
+
+@author: natalia
+
+Liceanse availible in repository
+"""
 
 """Use the vector class to do something simple."""
 
