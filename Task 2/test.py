@@ -33,8 +33,8 @@ print("Cross product = ", v1.cross(v2))
 # Task 2a-e
 
 # New spherical vectors
-vsph1 = vec.VectorSpherical(1, math.radians(0), math.radians(0))
-vsph2 = vec.VectorSpherical(1, math.radians(45), math.radians(0))
+vsph1 = vec.VectorSpherical(5, math.radians(0), math.radians(90))
+vsph2 = vec.VectorSpherical(1, math.radians(0), math.radians(0))
 vsph3 = vec.VectorSpherical(1, math.radians(90), math.radians(0))
 vsph4 = vec.VectorSpherical(1, math.radians(135), math.radians(0))
 # vsph1 = vec.VectorSpherical(7, 0.53, 0.79)  # Version with inputing radians
@@ -42,12 +42,13 @@ vsph4 = vec.VectorSpherical(1, math.radians(135), math.radians(0))
 # Converted cartesian vectors to spherical
 vsph5 = vec.VectorSpherical.to_sph(v1)  # Convert v1 to spherical coordinates
 
+
 # Print results for task 2a-e
 print("\nTasks 2 a-e ..............................................")
 print("\nVector vsph1 in Cartesian coordinates:", vsph1.to_cart())
 print("\nSpherical Vector vsph1", vsph1)
-print("\nSpherical Vector vsph2", vsph2)
-print("Sum of vectors:", vsph1 + vsph2)
+print("Spherical Vector vsph2", vsph2)
+print("\nSum of vectors:", vsph1 + vsph2)
 print("Difference of vectors:", vsph1 - vsph2)
 print("Cross product of vectors:", vsph1.cross(vsph2))
 print("Dot product of vectors:", vsph1.dot(vsph2))

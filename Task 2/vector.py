@@ -115,62 +115,33 @@ class VectorSpherical(Vector):
     def to_sph(cls, vector):
         """Convert to spherical coordinates. Classmethod (cls, arg1, ...)."""
         r_mag = vector.mag()
-        # r_mag = math.sqrt(vector.x_arg**2 + vector.y_arg**2 + vector.z_arg**2)
         theta = math.acos(vector.z_arg / r_mag) if r_mag != 0 else 0
         phi = math.atan2(vector.y_arg, vector.x_arg)
         return cls(r_mag, theta, phi)
 
-    # def mag_sph(self):
-    #    """Return r_mag - the magnitude of the spherical vector."""
-    #    return self.r_mag
 
     def __add__(self, other):
         """Convert spherical to cartesian then add two spherical vectors."""
-        v1 = Vector(*self.to_cart())
-        v2 = Vector(*other.to_cart())
-        cart_sum = v1 + v2
+        v_1 = Vector(*self.to_cart())
+        v_2 = Vector(*other.to_cart())
+        cart_sum = v_1 + v_2
         return VectorSpherical.to_sph(cart_sum)
 
-        # Adding individual arguments. Is it adding in spherical?
-        # cart_sum = Vector(self.x_arg + other.x_arg,
-        #                           self.y_arg + other.y_arg,
-        #                           self.z_arg + other.z_arg)
-        # return VectorSpherical.to_sph(cart_sum)
 
     def __sub__(self, other):
         """Convert sphercal to cartesian then subtract the convert back."""
-        v1 = Vector(*self.to_cart())
-        v2 = Vector(*other.to_cart())
-        cart_diff = v1 - v2
+        v_1 = Vector(*self.to_cart())
+        v_2 = Vector(*other.to_cart())
+        cart_diff = v_1 - v_2
         return VectorSpherical.to_sph(cart_diff)
 
     def mag(self):
         """Obtain the magnitude of vector."""
         return math.sqrt(self.x_arg**2 + self.y_arg**2 + self.z_arg**2)
 
-    # def dot(self, other):
-    #     """Obtain scalar (dot) product of 2 vectors."""
-    #     v1 = Vector(*self.to_cart())
-    #     v2 = Vector(*other.to_cart())
-    #     return VectorSpherical.to_sph(v1.dot(v2))
-
     def cross(self, other):
         """Obtain vector (cross) product of 2 vectors."""
-        v1 = Vector(*self.to_cart())
-        v2 = Vector(*other.to_cart())
-        cart_cross = v1.cross(v2)
+        v_1 = Vector(*self.to_cart())
+        v_2 = Vector(*other.to_cart())
+        cart_cross = v_1.cross(v_2)
         return VectorSpherical.to_sph(cart_cross)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
