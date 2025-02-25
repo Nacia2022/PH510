@@ -116,7 +116,7 @@ class VectorSpherical(Vector):
         """Convert to spherical coordinates. Classmethod (cls, arg1, ...)."""
         r_mag = vector.mag()
         # r_mag = math.sqrt(vector.x_arg**2 + vector.y_arg**2 + vector.z_arg**2)
-        theta = math.acos(vector.z_arg / r_mag)
+        theta = math.acos(vector.z_arg / r_mag) if r_mag != 0 else 0
         phi = math.atan2(vector.y_arg, vector.x_arg)
         return cls(r_mag, theta, phi)
 
