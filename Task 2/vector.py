@@ -87,10 +87,6 @@ class VectorSpherical(Vector):
         self.theta = theta
         self.phi = phi
 
-        # x_arg = r_mag * math.sin(theta) * math.cos(phi)
-        # y_arg = r_mag * math.sin(theta) * math.sin(phi)
-        # z_arg = r_mag * math.cos(theta)
-
         x_arg, y_arg, z_arg = self.to_cart()
         # Initialize with super to avoid referring to base class explocotly and
         # to make the child class inherit all the methods and properties.
