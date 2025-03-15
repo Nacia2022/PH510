@@ -7,8 +7,8 @@ Created on Mon Mar 3 16:09:34 2025
 """
 
 # Importing MPI module to eneable parallel processing
-import time
-from mpi4py import MPI, rc
+# import time
+from mpi4py import MPI
 import numpy as np
 
 # comm = MPI.COMM_WORLD
@@ -34,11 +34,16 @@ class MonteCarlo:
         else:
             new_seed = None
 
-        self.rng = np.random.defult_rng(new_seed)
+        self.rng = np.random.default_rng(new_seed)
 
         # Generate random numbers
         def gen_ran_num(self, count=6):
             return self.rng.random(count)
+
+        # Add another public method to return value and for pylint R0903
+
+        # self.value = value
+
 
 
 # Check that the current script is being run directly as the amin program, or
@@ -46,7 +51,7 @@ class MonteCarlo:
 if __name__ == "__main__":
     sim = MonteCarlo(seed=71)
     random_num = sim.gen_ran_num()
-    
+
     print(f"Process {sim.rank}: {random_num}")
     if sim.rank == 0:
         print("Simulation has started")
