@@ -13,19 +13,44 @@ import numpy as np
 
 # comm = MPI.COMM_WORLD
 
+
 # Create Monte Carlo class for parallel simulations
-
-
 class MonteCarlo:
+    """Initate class to setup parellel processing for the Monte Carlo.
+
+    Get the process rank and the total number of processes.
+    """
+
     def __init__(self, seed=None):
-        """Initate class to setup parellel processing for the Monte Carlo
-        get the process rank and the total number of processes."""
         self.comm = MPI.COMM_WORLD
         self.rank = self.comm.Get_rank()
         self.size = self.comm.Get_size()
         # Random number generator (rng) for each process (rank). We split the
         # work into separate processes that will run part of the computation
-        self.rng = np.random.default_rng(seed + self.rank)
+        # Seed in rng is for reproducability of a random number sequence so we
+        # asign a diffrent seed to each MPI process.
+        if seed is not None:
+            new_seed = seed + self.rank
+        else:
+            new_seed = None
+
+        self.rng = np.random.defult_rng(new_seed)
+
+        # Generate random numbers
+        def gen_ran_num(self, count=6):
+            return self.rng.random(count)
+
+
+# Check that the current script is being run directly as the amin program, or
+# if it's being imported as a module into another program.
+if __name__ == "__main__":
+    sim = MonteCarlo(seed=71)
+    random_num = sim.gen_ran_num()
+    
+    print(f"Process {sim.rank}: {random_num}")
+    if sim.rank == 0:
+        print("Simulation has started")
+
 
 
 
