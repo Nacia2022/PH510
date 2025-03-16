@@ -10,6 +10,7 @@ Created on Mon Mar 3 16:09:34 2025
 # import time
 from mpi4py import MPI
 import numpy as np
+import sys
 
 # comm = MPI.COMM_WORLD
 
@@ -65,6 +66,7 @@ if __name__ == "__main__":
 
     # Generate the random numbers
     random_num = sim.gen_ran_num()
+    sys.stdout.flush()  # Manually buffer (otherwise it only prints rank 0)
 
     print(f"Process {sim.rank}: {random_num}")
 
