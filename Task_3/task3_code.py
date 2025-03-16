@@ -37,26 +37,45 @@ class MonteCarlo:
         self.rng = np.random.default_rng(new_seed)
 
         # Generate random numbers
-        def gen_ran_num(self, count=6):
-            return self.rng.random(count)
+    def gen_ran_num(self, count=5):
+        """Generate random numbers."""
+        return self.rng.random(count)
 
-        # Add another public method to return value and for pylint R0903
+    def mc_volume(self, dim, sample_num=1000):
+        """Estimate volume of hyperspaces with various dimensions."""
+        count = 0
+        # Distribute work
+        for _ in range(sample_num // self.size):
+            point = self.rng.uniform(-1, 1, dim)
+            if np.linalg.norm(point) <= 1:
+                count += 1
 
-        # self.value = value
-
+        # Reduce results
+        total = self.comm.reduce(count, op=MPI.SUM, root=0)
+        if self.rank == 0:
+            volume = (2**dim)*(total/sample_num)
+            return volume
+        return None
 
 
 # Check that the current script is being run directly as the amin program, or
 # if it's being imported as a module into another program.
 if __name__ == "__main__":
     sim = MonteCarlo(seed=71)
+
+    # Generate the random numbers
     random_num = sim.gen_ran_num()
 
     print(f"Process {sim.rank}: {random_num}")
+
     if sim.rank == 0:
         print("Simulation has started")
+        print("Start calculation for volume of hyperspaces:")
 
-
+    for dim in [2, 3, 4, 5]:
+        volume = sim.mc_volume(dim)
+        if sim.rank == 0:
+            print(f"Volume in {dim}D: {volume}")
 
 
 # rc.fast_reduce = True # This is the default 9
