@@ -66,9 +66,14 @@ if __name__ == "__main__":
 
     # Generate the random numbers
     random_num = sim.gen_ran_num()
-    sys.stdout.flush()  # Manually buffer (otherwise it only prints rank 0)
+    # sys.stdout.flush()  # Manually buffer (otherwise it only prints rank 0)
 
-    print(f"Process {sim.rank}: {random_num}")
+    # Loop to print the random numbers for each rank
+    for rank in range(sim.size):
+        if sim.rank == rank:
+            print(f"Process {sim.rank}: {random_num}")
+        # Ensure print in order
+        MPI.COMM_WORLD.Barrier()
 
     if sim.rank == 0:
         print("Simulation has started")
