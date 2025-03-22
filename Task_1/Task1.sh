@@ -2,7 +2,7 @@
 
 #======================================================
 #
-# Job script for running a job on a single core 
+# Job script for running a serial job on a single core 
 #
 #======================================================
 
@@ -11,22 +11,22 @@
 #SBATCH --export=ALL
 #
 # Run in the standard partition (queue)
-#SBATCH --partition=teaching
+#SBATCH --partition=teaching-gpu
 #
 # Specify project account
 #SBATCH --account=teaching
 #
 # No. of tasks required (ntasks=1 for a single-core job)
-#SBATCH --ntasks=4
+#SBATCH --ntasks=1
 #
 # Specify (hard) runtime (HH:MM:SS)
 #SBATCH --time=00:20:00
 #
 # Job name
-#SBATCH --job-name=Task3
+#SBATCH --job-name=Task1
 #
 # Output file
-#SBATCH --output=Task3-%j.out
+#SBATCH --output=Task1-%j.out
 #======================================================
 
 module purge
@@ -45,11 +45,10 @@ module load openmpi/gcc-8.5.0/4.1.1
 #------------------------------------------------------
 
 # Add pylint score
-pylint --extension-pkg-allow-list=mpi4py.MPI task3_code.py
+pylint --extension-pkg-allow-list=mpi4py.MPI task1_code
 
 # Modify the line below to run your program
-mpirun -np $SLURM_NPROCS ./task3_code.py
-# mpirun -np 4 ./task3_code.py
+mpirun -np $SLURM_NPROCS ./task1_code
 
 #======================================================
 # Epilogue script to record job endtime and runtime

@@ -1,0 +1,37 @@
+===================================================================================
+SLURM Job ID:            11880027
+Submit time:             Sat Mar 22 15:38:06 GMT 2025 (Unix Epoch time: 1742657886)
+Start time:              Sat Mar 22 15:38:06 GMT 2025 (Unix Epoch time: 1742657886)
+No. nodes:               1
+No. tasks:               5
+Job name:                Task3
+Account:                 teaching
+QoS:                     teaching
+Partition (queue):       teaching
+Submit directory:        /users/qnb20123/PH510/PH510/Task_3
+Script name:             /users/qnb20123/PH510/PH510/Task_3/Task3.sh
+Master node:             wee09
+Nodes used:              wee09
+Task distribution:       
+===================================================================================
+
+
+--------------------------------------------------------------------
+Your code has been rated at 10.00/10 (previous run: 10.00/10, +0.00)
+
+Process 0: [0.25341368 0.52753884 0.76098656 0.63476106 0.20417243]
+Process 1: [0.83783673 0.00667512 0.23144826 0.11423554 0.7155833 ]
+Process 2: [0.49263619 0.30336754 0.26856778 0.98515715 0.21989125]
+Process 3: [0.89437827 0.52072095 0.67640414 0.66919894 0.56483809]
+Simulation has started
+Start calculation for volume of hyperspaces:
+Process 4: [0.21329168 0.15312905 0.66425045 0.68433176 0.9331644 ]
+Volume in 2D: 3.196
+Volume in 3D: 4.4
+Volume in 4D: 4.816
+Volume in 5D: 5.696
+===================================================================================
+SLURM job 11880027 ended:     Sat Mar 22 15:33:55 GMT 2025 (Unix Epoch time: 1742657635)
+This is an estimated end time using the 'date' command from node wee09.hpc.strath.ac.uk
+For accurate timings, use 'sacct -j 11880027 -X --format=Submit,Start,End,Elapsed'
+======================================================================================

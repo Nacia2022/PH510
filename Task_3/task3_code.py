@@ -10,7 +10,7 @@ Created on Mon Mar 3 16:09:34 2025
 # import time
 from mpi4py import MPI
 import numpy as np
-import sys
+# import sys
 
 # comm = MPI.COMM_WORLD
 
@@ -67,8 +67,9 @@ if __name__ == "__main__":
     # Generate the random numbers
     random_num = sim.gen_ran_num()
     # sys.stdout.flush()  # Manually buffer (otherwise it only prints rank 0)
+    # print(f"Process {sim.rank}: {random_num}")
 
-    # Loop to print the random numbers for each rank
+     # Loop to print the random numbers for each rank
     for rank in range(sim.size):
         if sim.rank == rank:
             print(f"Process {sim.rank}: {random_num}")
@@ -79,10 +80,10 @@ if __name__ == "__main__":
         print("Simulation has started")
         print("Start calculation for volume of hyperspaces:")
 
-    for dim in [2, 3, 4, 5]:
-        volume = sim.mc_volume(dim)
+    for dimension in [2, 3, 4, 5]:
+        vol = sim.mc_volume(dimension)
         if sim.rank == 0:
-            print(f"Volume in {dim}D: {volume}")
+            print(f"Volume in {dimension}D: {vol}")
 
 
 # rc.fast_reduce = True # This is the default 9
