@@ -27,14 +27,14 @@ class MonteCarlo:
         self.rank = self.comm.Get_rank()
         self.size = self.comm.Get_size()
         # Random number generator (rng) for each process (rank). We split the
-        # work into separate processes that will run part of the computation
+        # work into separate processes that will run part of the computation.
         # Seed in rng is for reproducability of a random number sequence so we
         # asign a diffrent seed to each MPI process.
         if seed is not None:
             new_seed = seed + self.rank
         else:
             new_seed = None
-
+        # Else for no provided seed - get numpy to generate a radom seed.
         self.rng = np.random.default_rng(new_seed)
 
         # Generate random numbers
@@ -42,22 +42,48 @@ class MonteCarlo:
         """Generate random numbers."""
         return self.rng.random(count)
 
-    def mc_volume(self, dim, sample_num=1000):
+    def mc_volume(self, dim, sample_num=10000):
         """Estimate volume of hyperspaces with various dimensions."""
-        count = 0
-        # Distribute work
+        count = 0  # Counter for points in sphere
+
+        # Distribute work amoung number of processes (self.size)
         for _ in range(sample_num // self.size):
-            point = self.rng.uniform(-1, 1, dim)
-            if np.linalg.norm(point) <= 1:
-                count += 1
+            point = self.rng.uniform(-1, 1, dimension)  # Create a random point in cube of n-dim
+            if np.linalg.norm(point) <= 1:  # Distance from center
+                count += 1  # If in spphere increase count
 
-        # Reduce results
+        # Reduce results - sum the results from all processes in rank 0 (root process)
         total = self.comm.reduce(count, op=MPI.SUM, root=0)
-        if self.rank == 0:
-            volume = (2**dim)*(total/sample_num)
-            return volume
-        return None
 
+        # New version for error analysis
+        if self.rank == 0:
+            volume_frac = total / sample_num
+            volume_cube = 2**dimension
+            volume_esti = volume_cube * volume_frac
+
+            # Error propagation
+            error = volume_cube * np.sqrt((volume_frac * (1 - volume_frac)) / sample_num)
+
+            return volume_esti, error  # Rank 0 returns estimated volume and error
+
+        return None, None  # Every other rank returns nothing
+
+
+# This version is old
+        # # Rank 0 gets the volume and other ranks return nothing
+        # if self.rank == 0:
+        #     volume = (2**dimension)*(total/sample_num)
+        #     return volume
+        # return None
+
+    # Attempt at Gaussian
+    # def mc_gauss(self, x0=0, sig=1, dimensions=1, sample_num=10000):
+    #     """Get avarage, variance and integral of Gaussian using Monte Carlo."""
+    #     tot_integral = 0
+
+    #     # Distribute work amoung number of processes (self.size)
+    #     for _ in range(sample_num // self.size):
+    #         x = 
 
 # Check that the current script is being run directly as the amin program, or
 # if it's being imported as a module into another program.
@@ -69,7 +95,7 @@ if __name__ == "__main__":
     # sys.stdout.flush()  # Manually buffer (otherwise it only prints rank 0)
     # print(f"Process {sim.rank}: {random_num}")
 
-     # Loop to print the random numbers for each rank
+    # Loop to print the random numbers for each rank
     for rank in range(sim.size):
         if sim.rank == rank:
             print(f"Process {sim.rank}: {random_num}")
@@ -81,9 +107,9 @@ if __name__ == "__main__":
         print("Start calculation for volume of hyperspaces:")
 
     for dimension in [2, 3, 4, 5]:
-        vol = sim.mc_volume(dimension)
+        vol, error = sim.mc_volume(dimension)
         if sim.rank == 0:
-            print(f"Volume in {dimension}D: {vol}")
+            print(f"Estimated volume in {dimension}D: {vol:.6f} ± {error:.6f}")
 
 
 # rc.fast_reduce = True # This is the default 9
