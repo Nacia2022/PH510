@@ -42,7 +42,7 @@ class MonteCarlo:
         """Generate random numbers."""
         return self.rng.random(count)
 
-    def mc_volume(self, dimensions, sample_num=10000):
+    def mc_volume(self, dimensions, sample_num=1000000):
         """Estimate volume of hyperspaces with various dimensions."""
         count = 0  # Counter for points in sphere
 
@@ -109,7 +109,7 @@ if __name__ == "__main__":
     for dims in [2, 3, 4, 5]:
         vol, vol_err = sim.mc_volume(dims)
         if sim.rank == 0:
-            print(f"Estimated volume in {dims}D: {vol:.6f} ± {vol_err:.6f}")
+            print(f"Estimated volume in {dims}D: {vol:.6f} error: {vol_err:.6f}")
 
 
 # rc.fast_reduce = True # This is the default 9
