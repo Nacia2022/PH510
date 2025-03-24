@@ -42,13 +42,13 @@ class MonteCarlo:
         """Generate random numbers."""
         return self.rng.random(count)
 
-    def mc_volume(self, dim, sample_num=10000):
+    def mc_volume(self, dimensions, sample_num=10000):
         """Estimate volume of hyperspaces with various dimensions."""
         count = 0  # Counter for points in sphere
 
         # Distribute work amoung number of processes (self.size)
         for _ in range(sample_num // self.size):
-            point = self.rng.uniform(-1, 1, dimension)  # Create a random point in cube of n-dim
+            point = self.rng.uniform(-1, 1, dimensions)  # Create a random point in cube of n-dim
             if np.linalg.norm(point) <= 1:  # Distance from center
                 count += 1  # If in spphere increase count
 
@@ -58,13 +58,13 @@ class MonteCarlo:
         # New version for error analysis
         if self.rank == 0:
             volume_frac = total / sample_num
-            volume_cube = 2**dimension
+            volume_cube = 2**dimensions
             volume_esti = volume_cube * volume_frac
 
             # Error propagation
-            error = volume_cube * np.sqrt((volume_frac * (1 - volume_frac)) / sample_num)
+            volume_err = volume_cube * np.sqrt((volume_frac * (1 - volume_frac)) / sample_num)
 
-            return volume_esti, error  # Rank 0 returns estimated volume and error
+            return volume_esti, volume_err  # Rank 0 returns estimated volume and error
 
         return None, None  # Every other rank returns nothing
 
@@ -83,7 +83,7 @@ class MonteCarlo:
 
     #     # Distribute work amoung number of processes (self.size)
     #     for _ in range(sample_num // self.size):
-    #         x = 
+    #         x =
 
 # Check that the current script is being run directly as the amin program, or
 # if it's being imported as a module into another program.
@@ -106,10 +106,10 @@ if __name__ == "__main__":
         print("Simulation has started")
         print("Start calculation for volume of hyperspaces:")
 
-    for dimension in [2, 3, 4, 5]:
-        vol, error = sim.mc_volume(dimension)
+    for dims in [2, 3, 4, 5]:
+        vol, vol_err = sim.mc_volume(dims)
         if sim.rank == 0:
-            print(f"Estimated volume in {dimension}D: {vol:.6f} ± {error:.6f}")
+            print(f"Estimated volume in {dims}D: {vol:.6f} ± {vol_err:.6f}")
 
 
 # rc.fast_reduce = True # This is the default 9
