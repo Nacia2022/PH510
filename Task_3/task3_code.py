@@ -62,9 +62,9 @@ class MonteCarlo:
             volume_esti = volume_cube * volume_frac
 
             # Error propagation
-            error = volume_cube * np.sqrt((volume_frac * (1 - volume_frac)) / sample_num)
+            err = volume_cube * np.sqrt((volume_frac * (1 - volume_frac)) / sample_num)
 
-            return volume_esti, error  # Rank 0 returns estimated volume and error
+            return volume_esti, err  # Rank 0 returns estimated volume and error
 
         return None, None  # Every other rank returns nothing
 
@@ -107,9 +107,9 @@ if __name__ == "__main__":
         print("Start calculation for volume of hyperspaces:")
 
     for dimension in [2, 3, 4, 5]:
-        vol, error = sim.mc_volume(dimension)
+        vol, err = sim.mc_volume(dimension)
         if sim.rank == 0:
-            print(f"Estimated volume in {dimension}D: {vol:.6f} ± {error:.6f}")
+            print(f"Estimated volume in {dimension}D: {vol:.6f} ± {err:.6f}")
 
 
 # rc.fast_reduce = True # This is the default 9
