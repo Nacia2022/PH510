@@ -4,6 +4,9 @@
 Created on Mon Mar 3 16:09:34 2025
 
 @author: natalia
+
+Licensed and Copyrighted 2025.
+
 """
 
 # Importing MPI module to eneable parallel processing
@@ -11,8 +14,6 @@ Created on Mon Mar 3 16:09:34 2025
 from mpi4py import MPI
 import numpy as np
 # import sys
-
-# comm = MPI.COMM_WORLD
 
 
 # Create Monte Carlo class for parallel simulations
@@ -42,8 +43,8 @@ class MonteCarlo:
         """Generate random numbers."""
         return self.rng.random(count)
 
-    def mc_volume(self, dimensions, sample_num=10000):
-        """Estimate volume of hyperspaces with various dimensions."""
+    def mc_volume(self, dimensions, sample_num=1000000):
+        """Estimate volume of hyperspaces with various dimensions using Monte Carlo sampling."""
         count = 0  # Counter for points in sphere
 
         # Distribute work amoung number of processes (self.size)
@@ -65,25 +66,46 @@ class MonteCarlo:
             volume_err = volume_cube * np.sqrt((volume_frac * (1 - volume_frac)) / sample_num)
 
             return volume_esti, volume_err  # Rank 0 returns estimated volume and error
-
         return None, None  # Every other rank returns nothing
-
-
-# This version is old
-        # # Rank 0 gets the volume and other ranks return nothing
-        # if self.rank == 0:
-        #     volume = (2**dimension)*(total/sample_num)
-        #     return volume
-        # return None
-
     # Attempt at Gaussian
-    # def mc_gauss(self, x0=0, sig=1, dimensions=1, sample_num=10000):
-    #     """Get avarage, variance and integral of Gaussian using Monte Carlo."""
-    #     tot_integral = 0
+    def gauss(self, x_1, x_0, sig):
+        """Calculate the value of a Gaussian distribution at a point x.
+        
+        x: Given point
+        x0: Mean of distribution
+        sig: Standard deviation
+        """
+        return np.exp(-((x_1-x_0)**2) / (2*sig**2))/ (sig*np.sqrt(2*np.pi))
 
-    #     # Distribute work amoung number of processes (self.size)
-    #     for _ in range(sample_num // self.size):
-    #         x =
+
+    def gauss_int(self, x_0=0, sig=1, dimensions=1, sample_num=10000):
+        """Get the estimated integral, average, and varience of the Gaussian
+        function over a finite domain uing Monte Carlo sampling.
+        
+        x0: Mean of distribution
+        sig: Standard deviation
+        dimensions: Number of dimensions
+        
+        samples: draw samples for MC  from the given range -10 sigma to 10 sigma in given dimension.
+        Parallization to spread samples between ranks.
+        """
+        samples = self.rng.uniform(-10 * sig, 10 * sig, (sample_num // self.size, dimensions))
+        values = np.prod(self.gauss(samples, x_0, sig), axis=1)
+        local_sum = np.sum(values)
+        local_sum_sq = np.sum(values ** 2)
+        total = self.comm.reduce(local_sum, op=MPI.SUM, root=0)
+        total_sq = self.comm.reduce(local_sum_sq, op=MPI.SUM, root=0)
+        if self.rank ==0:
+            mean = (total / sample_num) * (20 * sig) ** dimensions
+            variance = ((total_sq / sample_num) - (mean ** 2)) * (20 * sig) ** (2 * dimensions)
+            gauss_err = np.sqrt(mean/sample_num)
+            return mean, variance, gauss_err
+        return None, None, None
+
+        # # Distribute work amoung number of processes (self.size)
+        # for _ in range(sample_num // self.size):
+        #     x =
+
 
 # Check that the current script is being run directly as the amin program, or
 # if it's being imported as a module into another program.
@@ -109,20 +131,7 @@ if __name__ == "__main__":
     for dims in [2, 3, 4, 5]:
         vol, vol_err = sim.mc_volume(dims)
         if sim.rank == 0:
-            print(f"Estimated volume in {dims}D: {vol:.6f} ± {vol_err:.6f}")
-
-
-# rc.fast_reduce = True # This is the default 9
-# # Note the lower case for reduce:
-# res = comm.reduce(np.asarray([1,2,3]), op=MPI.SUM)
-
-# if comm.Get_rank() == 0:
-# print("All done!", res)
-
-
-
-
-
+            print(f"Estimated volume in {dims}D: {vol:.6f} error: {vol_err:.6f}")
 
 
 
