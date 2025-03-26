@@ -125,8 +125,8 @@ class MonteCarlo:
 
             integral = (total_int / sample_num) * vol_reg
             mean = total_mean / total_int
-            variance = ((total_mean_sq / total_int) - (mean ** 2)) * vol_reg
-            gauss_err = np.sqrt(values) * vol_reg / np.sqrt(sample_num)
+            variance = (total_mean_sq / total_int) - (mean ** 2)
+            gauss_err = np.sqrt(variance) / np.sqrt(sample_num)
             return integral, mean, variance, gauss_err
         return None, None, None, None
 
