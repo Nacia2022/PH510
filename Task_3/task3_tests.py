@@ -49,25 +49,54 @@ case_6 = (6, 2, 3)
 # Sample size for integration
 sample_num = 100000
 
-
-# Function for gaussian integration using defined cases
-def test_gauss(cases):
+# New method
+def test_gauss():
     """Print results of test."""
     mc_gauss = mc.MonteCarlo(seed=71)
-    
-    for dimensions, sig, x_0 in cases:
-        integral, mean, variance, gauss_err = mc_gauss.gauss_int(x_0=x_0, sig=sig, dimensions=dimensions, sample_num=sample_num)
-        
-        if mc_gauss.rank == 0:
-            if dimensions == 1:
-                print(f"1D Test - Integral: {integral:.6f}, Mean: {mean}, Variance: {variance}, Error: {gauss_err:.6f}, Sigma: {sig}, x0: {x_0}")
-            else:
-                print(f"6D Test - Integral: {integral:.6f}, Mean: {mean}, Variance: {variance}, Error: {gauss_err:.6f}, Sigma: {sig}, x0: {x_0}")
+
+    # Define parameteres
+    dim_vals = [1, 6]
+    sig_vals = [0.5, 1, 2]
+    x_0_vals = [0, 3, -2]
+    sample_num = 100000  # This can be increased for better accuracy
+
+    #
+    results = []
+
+    for dimensions in dim_vals:
+        for sig in sig_vals:
+            for x_0 in x_0_vals:
+                integral, mean, variance, gauss_err = mc_gauss.gauss_int(x_0=x_0, sig=sig, dimensions=dimensions, sample_num=sample_num)
+
+                if mc_gauss.rank == 0:
+                    results.append((dimensions, sig, x_0, integral, mean, variance, gauss_err))
+                    print(f"Dimensions: {dimensions}, Sigma: {sig}, x0: {x_0}")
+                    print(f"Integral: {integral:.6f}, Mean: {mean}, Variance: {variance}, Error: {gauss_err:.6f}\n")
+
+    return results
 
 if __name__ == "__main__":
-    test_gauss([case_1, case_2, case_3])
+    test_gauss()
     
-    test_gauss([case_4, case_5, case_6])
+
+# # Function for gaussian integration using defined cases
+# def test_gauss(cases):
+#     """Print results of test."""
+#     mc_gauss = mc.MonteCarlo(seed=71)
+    
+#     for dimensions, sig, x_0 in cases:
+#         integral, mean, variance, gauss_err = mc_gauss.gauss_int(x_0=x_0, sig=sig, dimensions=dimensions, sample_num=sample_num)
+        
+#         if mc_gauss.rank == 0:
+#             if dimensions == 1:
+#                 print(f"1D Test - Integral: {integral:.6f}, Mean: {mean}, Variance: {variance}, Error: {gauss_err:.6f}, Sigma: {sig}, x0: {x_0}")
+#             else:
+#                 print(f"6D Test - Integral: {integral:.6f}, Mean: {mean}, Variance: {variance}, Error: {gauss_err:.6f}, Sigma: {sig}, x0: {x_0}")
+
+# if __name__ == "__main__":
+#     test_gauss([case_1, case_2, case_3])
+    
+#     test_gauss([case_4, case_5, case_6])
 
 
 
