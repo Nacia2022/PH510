@@ -9,7 +9,6 @@ Licensed and Copyrighted 2025.
 
 """
 
-from mpi4py import MPI
 import task3_code as mc
 
 if __name__ == "__main__":
@@ -48,7 +47,7 @@ case_5 = (6, 1, -2)
 case_6 = (6, 2, 3)
 
 # Sample size for integration
-# sample_num = 100000
+sample_num = 100000
 
 
 # Function for gaussian integration using defined cases
@@ -56,7 +55,7 @@ def test_gauss(cases):
     """Print results of test."""
     mc_gauss = mc.MonteCarlo(seed=71)
     
-    for dimensions, sig, x_0, in cases:
+    for dimensions, sig, x_0 in cases:
         integral, mean, variance, gauss_err = mc_gauss.gauss_int(x_0=x_0, sig=sig, dimensions=dimensions, sample_num=sample_num)
         
         if mc_gauss.rank == 0:
