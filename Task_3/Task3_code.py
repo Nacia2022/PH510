@@ -128,6 +128,10 @@ class MonteCarlo:
             variance = (total_mean_sq / total_int) - (mean ** 2)
             gauss_err = np.sqrt(variance) / np.sqrt(sample_num)
             return integral, mean, variance, gauss_err
+
+            integral = float(integral)
+            gauss_err = float(gauss_err)
+
         return None, None, None, None
 
         # # Distribute work amoung number of processes (self.size)
