@@ -17,7 +17,7 @@
 #SBATCH --account=teaching
 #
 # No. of tasks required (ntasks=1 for a single-core job)
-#SBATCH --ntasks=4
+#SBATCH --ntasks=16
 #
 # Specify (hard) runtime (HH:MM:SS)
 #SBATCH --time=00:20:00
@@ -48,7 +48,7 @@ module load openmpi/gcc-8.5.0/4.1.1
 pylint --extension-pkg-allow-list=mpi4py.MPI task3_code.py
 
 # Modify the line below to run your program
-mpirun -np $SLURM_NPROCS ./task3_code.py
+mpirun -np $SLURM_NPROCS ./task3_tests.py
 # mpirun -np 4 ./task3_code.py
 
 #======================================================

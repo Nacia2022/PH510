@@ -10,22 +10,20 @@ Licensed and Copyrighted 2025.
 """
 
 from mpi4py import MPI
-from task3_code import mc
+import task3_code as mc
 
 if __name__ == "__main__":
     sim = mc.MonteCarlo(seed=71)
 
     # Generate the random numbers
-    random_num = sim.gen_ran_num()
-    # sys.stdout.flush()  # Manually buffer (otherwise it only prints rank 0)
-    # print(f"Process {sim.rank}: {random_num}")
-
+    #random_num = sim.gen_ran_num()
+    
     # Loop to print the random numbers for each rank
-    for rank in range(sim.size):
-        if sim.rank == rank:
-            print(f"Process {sim.rank}: {random_num}")
+    #for rank in range(sim.size):
+    #    if sim.rank == rank:
+    #        print(f"Process {sim.rank}: {random_num}")
         # Ensure print in order
-        MPI.COMM_WORLD.Barrier()
+    #    MPI.COMM_WORLD.Barrier()
 
     if sim.rank == 0:
         print("Simulation has started")
@@ -34,7 +32,7 @@ if __name__ == "__main__":
     for dims in [2, 3, 4, 5]:
         vol, vol_err = sim.mc_volume(dims)
         if sim.rank == 0:
-            print(f"Estimated volume in {dims}D: {vol:.6f} ± {vol_err:.6f}")
+            print(f"Estimated volume in {dims}D: {vol:.6f} error: {vol_err:.6f}")
 
 
 # Gaussian Tests
