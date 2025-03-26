@@ -10,11 +10,10 @@ Licensed and Copyrighted 2025.
 """
 
 from mpi4py import MPI
-import numpy as np
-import MonteCarlo
+from task3_code import mc
 
 if __name__ == "__main__":
-    sim = MonteCarlo(seed=71)
+    sim = mc.MonteCarlo(seed=71)
 
     # Generate the random numbers
     random_num = sim.gen_ran_num()
@@ -36,4 +35,42 @@ if __name__ == "__main__":
         vol, vol_err = sim.mc_volume(dims)
         if sim.rank == 0:
             print(f"Estimated volume in {dims}D: {vol:.6f} ± {vol_err:.6f}")
+
+
+# Gaussian Tests
+
+# Define cases for 1D
+case_1 = (1, 0.5, 0)
+case_2 = (1, 1, -2)
+case_3 = (1, 2, 3)
+
+# Define cases for 6D
+case_4 = (6, 0.5, 0)
+case_5 = (6, 1, -2)
+case_6 = (6, 2, 3)
+
+# Sample size for integration
+# sample_num = 100000
+
+
+# Function for gaussian integration using defined cases
+def test_gauss(cases):
+    """Print results of test."""
+    mc_gauss = mc.MonteCarlo(seed=71)
+    
+    for dimensions, sig, x_0, in cases:
+        integral, mean, variance, gauss_err = mc_gauss.gauss_int(x_0=x_0, sig=sig, dimensions=dimensions, sample_num=sample_num)
+        
+        if mc_gauss.rank == 0:
+            if dimensions == 1:
+                print(f"1D Test - Integral: {integral:.6f}, Mean: {mean}, Variance: {variance}, Error: {gauss_err:.6f}, Sigma: {sig}, x0: {x_0}")
+            else:
+                print(f"6D Test - Integral: {integral:.6f}, Mean: {mean}, Variance: {variance}, Error: {gauss_err:.6f}, Sigma: {sig}, x0: {x_0}")
+
+if __name__ == "__main__":
+    test_gauss([case_1, case_2, case_3])
+    
+    test_gauss([case_4, case_5, case_6])
+
+
 
