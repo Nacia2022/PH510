@@ -69,8 +69,8 @@ def test_gauss():
                 if mc_gauss.rank == 0:
                     results.append((dimensions, sig, x_0, intg, mean, var, err))
                     print(f"Dimensions: {dimensions}, Sigma: {sig}, x0: {x_0}")
-                    print(f"Integral:{intg:.6f} error{err:.6f},"
-                           "Mean:{mean:.6f}, Variance:{var:.6f}\n")
+                    print(f"Integral: {intg:.6f} error: {err:.6f},"
+                           "Mean: {mean:.6f}, Variance: {var:.6f}\n")
 
     return results
 
