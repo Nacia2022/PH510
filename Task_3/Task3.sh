@@ -8,6 +8,8 @@
 
 #======================================================
 # Propogate environment variables to the compute node
+
+#SBATCH --mem=3G
 #SBATCH --export=ALL
 #
 # Run in the standard partition (queue)
@@ -17,7 +19,7 @@
 #SBATCH --account=teaching
 #
 # No. of tasks required (ntasks=1 for a single-core job)
-#SBATCH --ntasks=16
+#SBATCH --ntasks=1
 #
 # Specify (hard) runtime (HH:MM:SS)
 #SBATCH --time=00:20:00

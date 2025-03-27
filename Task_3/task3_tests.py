@@ -8,10 +8,16 @@ Created on Mon Mar 24 15:07:16 2025
 Licensed and Copyrighted 2025.
 
 """
-
+from mpi4py import MPI
 import task3_code as mc
+import time
+
+time1 = time.time()
 
 if __name__ == "__main__":
+    # Start time
+    time1 = time.time()
+
     sim = mc.MonteCarlo(seed=71)
 
     # Generate the random numbers
@@ -25,40 +31,30 @@ if __name__ == "__main__":
     #    MPI.COMM_WORLD.Barrier()
 
     if sim.rank == 0:
-        print("Simulation has started")
         print("Start calculation for volume of hyperspaces:")
 
     for dims in [2, 3, 4, 5]:
         vol, vol_err = sim.mc_volume(dims)
         if sim.rank == 0:
             print(f"Estimated volume in {dims}D: {vol:.6f} error: {vol_err:.6f}")
+    # End time
+    time2 = time.time()
+    # Claculate total time
+    total_time1 = time2 - time1
+    if sim.rank == 0:
+        print(f"Total time for N-ball Volume: {total_time1:.6f} seconds")
 
 
 # Gaussian Tests
-
-# Define cases for 1D
-case_1 = (1, 0.5, 0)
-case_2 = (1, 1, -2)
-case_3 = (1, 2, 3)
-
-# Define cases for 6D
-case_4 = (6, 0.5, 0)
-case_5 = (6, 1, -2)
-case_6 = (6, 2, 3)
-
-# Sample size for integration
-sample_num = 100000
-
-# New method
 def test_gauss():
     """Print results of test."""
     mc_gauss = mc.MonteCarlo(seed=71)
 
     # Define parameteres
     dim_vals = [1, 6]
-    sig_vals = [0.5, 1, 2]
-    x_0_vals = [0, 3, -2]
-    sample_num = 100000  # This can be increased for better accuracy
+    sig_vals = [0.5, 2]  # Can add more eg. [0.5, 1, 2]
+    x_0_vals = [0, 3]  # [0, 3, -2]
+    sample_num = 1000000  # This can be increased for better accuracy
 
     #
     results = []
@@ -71,32 +67,20 @@ def test_gauss():
                 if mc_gauss.rank == 0:
                     results.append((dimensions, sig, x_0, integral, mean, variance, gauss_err))
                     print(f"Dimensions: {dimensions}, Sigma: {sig}, x0: {x_0}")
-                    print(f"Integral: {integral:.6f}, Mean: {mean}, Variance: {variance}, Error: {gauss_err:.6f}\n")
+                    print(f"Integral: {integral:.6f}, Mean: {mean:.6f}, Variance: {variance:.6f}, Error: {gauss_err:.6f}\n")
 
     return results
 
 if __name__ == "__main__":
+    # Start time
+    time3 = time.time()
+
     test_gauss()
-    
+    # End time
+    time4 = time.time()
+    # Claculate total time
+    total_time2 = time4 - time3
+    if sim.rank == 0:
+        print(f"Total time for Gaussian: {total_time2:.6f} seconds")
 
-# # Function for gaussian integration using defined cases
-# def test_gauss(cases):
-#     """Print results of test."""
-#     mc_gauss = mc.MonteCarlo(seed=71)
-    
-#     for dimensions, sig, x_0 in cases:
-#         integral, mean, variance, gauss_err = mc_gauss.gauss_int(x_0=x_0, sig=sig, dimensions=dimensions, sample_num=sample_num)
-        
-#         if mc_gauss.rank == 0:
-#             if dimensions == 1:
-#                 print(f"1D Test - Integral: {integral:.6f}, Mean: {mean}, Variance: {variance}, Error: {gauss_err:.6f}, Sigma: {sig}, x0: {x_0}")
-#             else:
-#                 print(f"6D Test - Integral: {integral:.6f}, Mean: {mean}, Variance: {variance}, Error: {gauss_err:.6f}, Sigma: {sig}, x0: {x_0}")
-
-# if __name__ == "__main__":
-#     test_gauss([case_1, case_2, case_3])
-    
-#     test_gauss([case_4, case_5, case_6])
-
-
-
+MPI.Finalize()

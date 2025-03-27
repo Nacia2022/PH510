@@ -86,7 +86,7 @@ class MonteCarlo:
         # return np.exp(-((x_1-x_0)**2) / (2 * sig ** 2))/ (sig*np.sqrt(2*np.pi))
 
 
-    def gauss_int(self, x_0=0, sig=1, dimensions=1, sample_num=10000):
+    def gauss_int(self, x_0=0, sig=1, dimensions=1, sample_num=1000000):
         """Get the estimated integral, average, and varience of the Gaussian
         function over a finite domain uing Monte Carlo sampling.
         
@@ -124,7 +124,7 @@ class MonteCarlo:
             vol_reg = (20 * sig) ** dimensions
 
             integral = (total_int / sample_num) * vol_reg
-            mean = np.mean(total_mean / total_int)  # in 6D it gives an array, maybe this way itll be scalar
+            mean = np.mean(total_mean / total_int) if total_int !=0 else np.zeros(dimensions) # in 6D it gives an array, maybe this way itll be scalar
             variance = np.mean((total_mean_sq / total_int) - (mean ** 2))
             gauss_err = np.sqrt(variance) / np.sqrt(sample_num)
             return integral, mean, variance, gauss_err

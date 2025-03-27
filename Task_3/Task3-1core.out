@@ -1,0 +1,63 @@
+===================================================================================
+SLURM Job ID:            11956898
+Submit time:             Thu Mar 27 12:04:42 GMT 2025 (Unix Epoch time: 1743077082)
+Start time:              Thu Mar 27 12:04:50 GMT 2025 (Unix Epoch time: 1743077090)
+No. nodes:               1
+No. tasks:               1
+Job name:                Task3
+Account:                 teaching
+QoS:                     teaching
+Partition (queue):       teaching
+Submit directory:        /users/qnb20123/PH510/PH510/Task_3
+Script name:             /users/qnb20123/PH510/PH510/Task_3/Task3.sh
+Master node:             wee11
+Nodes used:              wee11
+Task distribution:       
+===================================================================================
+
+************* Module task3_code
+task3_code.py:127:0: C0301: Line too long (150/100) (line-too-long)
+task3_code.py:136:0: C0303: Trailing whitespace (trailing-whitespace)
+task3_code.py:89:4: R0914: Too many local variables (18/15) (too-many-locals)
+task3_code.py:132:12: W0101: Unreachable code (unreachable)
+
+------------------------------------------------------------------
+Your code has been rated at 9.26/10 (previous run: 9.26/10, +0.00)
+
+Start calculation for volume of hyperspaces:
+Estimated volume in 2D: 3.140972 error: 0.001643
+Estimated volume in 3D: 4.187576 error: 0.003996
+Estimated volume in 4D: 4.921168 error: 0.007384
+Estimated volume in 5D: 5.291136 error: 0.011888
+Total time for N-ball Volume: 75.514220 seconds
+Dimensions: 1, Sigma: 0.5, x0: 0
+Integral: 0.999503, Mean: -0.000117, Variance: 0.249176, Error: 0.000499
+
+Dimensions: 1, Sigma: 0.5, x0: 3
+Integral: 1.000649, Mean: 3.000549, Variance: 0.249455, Error: 0.000499
+
+Dimensions: 1, Sigma: 2, x0: 0
+Integral: 0.999964, Mean: 0.000446, Variance: 4.002241, Error: 0.002001
+
+Dimensions: 1, Sigma: 2, x0: 3
+Integral: 0.999444, Mean: 3.001298, Variance: 3.996879, Error: 0.001999
+
+Dimensions: 6, Sigma: 0.5, x0: 0
+Integral: 1.177790, Mean: -0.026045, Variance: 0.224744, Error: 0.000474
+
+Dimensions: 6, Sigma: 0.5, x0: 3
+Integral: 1.082070, Mean: 2.975220, Variance: 0.241889, Error: 0.000492
+
+Dimensions: 6, Sigma: 2, x0: 0
+Integral: 0.848701, Mean: -0.114759, Variance: 4.401728, Error: 0.002098
+
+Dimensions: 6, Sigma: 2, x0: 3
+Integral: 0.731949, Mean: 2.992744, Variance: 4.694208, Error: 0.002167
+
+Total time for Gaussian: 1.120641 seconds
+===================================================================================
+SLURM job 11956898 ended:     Thu Mar 27 12:06:12 GMT 2025 (Unix Epoch time: 1743077172)
+This is an estimated end time using the 'date' command from node wee11.hpc.strath.ac.uk
+For accurate timings, use 'sacct -j 11956898 -X --format=Submit,Start,End,Elapsed'
+======================================================================================
+slurmstepd: error: Pid 3016132 is still in the freezer job cgroup.  It might be left uncleaned after the job.
