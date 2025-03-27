@@ -37,13 +37,13 @@ if __name__ == "__main__":
     for dims in [2, 3, 4, 5]:
         vol, vol_err = sim.mc_volume(dims)
         if sim.rank == 0:
-            print(f"Estimated volume in {dims}D: {vol:.6f} error: {vol_err:.6f}\n")
+            print(f"Estimated volume in {dims}D: {vol:.6f} error: {vol_err:.6f}")
     # End time
     time2 = time.time()
     # Claculate total time
     total_time1 = time2 - time1
     if sim.rank == 0:
-        print(f"Total time for N-ball Volume: {total_time1:.6f} seconds")
+        print(f"Total time for N-ball Volume: {total_time1:.6f} seconds\n")
 
 
 # Gaussian Tests
@@ -69,7 +69,8 @@ def test_gauss():
                 if mc_gauss.rank == 0:
                     results.append((dimensions, sig, x_0, intg, mean, var, err))
                     print(f"Dimensions: {dimensions}, Sigma: {sig}, x0: {x_0}")
-                    print(f"Integral:{intg:.6f}±{err:.6f}, Mean:{mean:.6f}, Variance:{var:.6f}\n")
+                    print(f"Integral:{intg:.6f} error{err:.6f},"
+                           "Mean:{mean:.6f}, Variance:{var:.6f}\n")
 
     return results
 
