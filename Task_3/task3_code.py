@@ -124,16 +124,15 @@ class MonteCarlo:
             vol_reg = (20 * sig) ** dimensions
 
             integral = (total_int / sample_num) * vol_reg
-            mean = np.mean(total_mean / total_int) if total_int !=0 else np.zeros(dimensions) # in 6D it gives an array, maybe this way itll be scalar
+            mean = np.mean(total_mean / total_int) if total_int !=0 else np.zeros(dimensions)
             variance = np.mean((total_mean_sq / total_int) - (mean ** 2))
             gauss_err = np.sqrt(variance) / np.sqrt(sample_num)
             return integral, mean, variance, gauss_err
 
-            integral = float(integral)
-            gauss_err = float(gauss_err)
-            mean = float(mean)
-            gauss_err = float(gauss_err)
-            
+            # integral = float(integral)
+            # gauss_err = float(gauss_err)
+            # mean = float(mean)
+            # gauss_err = float(gauss_err)
 
         return None, None, None, None
 
