@@ -8,9 +8,10 @@ Created on Mon Mar 24 15:07:16 2025
 Licensed and Copyrighted 2025.
 
 """
+import time
 from mpi4py import MPI
 import task3_code as mc
-import time
+
 
 time1 = time.time()
 
@@ -22,7 +23,7 @@ if __name__ == "__main__":
 
     # Generate the random numbers
     #random_num = sim.gen_ran_num()
-    
+
     # Loop to print the random numbers for each rank
     #for rank in range(sim.size):
     #    if sim.rank == rank:
@@ -36,7 +37,7 @@ if __name__ == "__main__":
     for dims in [2, 3, 4, 5]:
         vol, vol_err = sim.mc_volume(dims)
         if sim.rank == 0:
-            print(f"Estimated volume in {dims}D: {vol:.6f} error: {vol_err:.6f}")
+            print(f"Estimated volume in {dims}D: {vol:.6f} error: {vol_err:.6f}\n")
     # End time
     time2 = time.time()
     # Claculate total time
@@ -52,22 +53,23 @@ def test_gauss():
 
     # Define parameteres
     dim_vals = [1, 6]
-    sig_vals = [0.5, 2]  # Can add more eg. [0.5, 1, 2]
-    x_0_vals = [0, 3]  # [0, 3, -2]
+    sig_vals = [0.5, 2]
+    x_0_vals = [0, 3]
     sample_num = 1000000  # This can be increased for better accuracy
 
-    #
     results = []
 
     for dimensions in dim_vals:
         for sig in sig_vals:
             for x_0 in x_0_vals:
-                integral, mean, variance, gauss_err = mc_gauss.gauss_int(x_0=x_0, sig=sig, dimensions=dimensions, sample_num=sample_num)
+                intg, mean, var, err = mc_gauss.gauss_int(x_0=x_0,
+                                       sig=sig, dimensions=dimensions,
+                                       sample_num=sample_num)
 
                 if mc_gauss.rank == 0:
-                    results.append((dimensions, sig, x_0, integral, mean, variance, gauss_err))
+                    results.append((dimensions, sig, x_0, intg, mean, var, err))
                     print(f"Dimensions: {dimensions}, Sigma: {sig}, x0: {x_0}")
-                    print(f"Integral: {integral:.6f}, Mean: {mean:.6f}, Variance: {variance:.6f}, Error: {gauss_err:.6f}\n")
+                    print(f"Integral:{intg:.6f}±{err:.6f}, Mean:{mean:.6f}, Variance:{var:.6f}\n")
 
     return results
 

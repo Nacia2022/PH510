@@ -9,8 +9,6 @@ Licensed and Copyrighted 2025.
 
 """
 
-# Importing MPI module to eneable parallel processing
-# import time
 from mpi4py import MPI
 import numpy as np
 
@@ -129,43 +127,5 @@ class MonteCarlo:
             gauss_err = np.sqrt(variance) / np.sqrt(sample_num)
             return integral, mean, variance, gauss_err
 
-            # integral = float(integral)
-            # gauss_err = float(gauss_err)
-            # mean = float(mean)
-            # gauss_err = float(gauss_err)
 
         return None, None, None, None
-
-        # # Distribute work amoung number of processes (self.size)
-        # for _ in range(sample_num // self.size):
-        #     x =
-
-
-# Check that the current script is being run directly as the amin program, or
-# if it's being imported as a module into another program.
-# if __name__ == "__main__":
-#     sim = MonteCarlo(seed=71)
-
-#     # Generate the random numbers
-#     random_num = sim.gen_ran_num()
-#     # sys.stdout.flush()  # Manually buffer (otherwise it only prints rank 0)
-#     # print(f"Process {sim.rank}: {random_num}")
-
-#     # Loop to print the random numbers for each rank
-#     for rank in range(sim.size):
-#         if sim.rank == rank:
-#             print(f"Process {sim.rank}: {random_num}")
-#         # Ensure print in order
-#         MPI.COMM_WORLD.Barrier()
-
-#     if sim.rank == 0:
-#         print("Simulation has started")
-#         print("Start calculation for volume of hyperspaces:")
-
-#     for dims in [2, 3, 4, 5]:
-#         vol, vol_err = sim.mc_volume(dims)
-#         if sim.rank == 0:
-#             print(f"Estimated volume in {dims}D: {vol:.6f} error: {vol_err:.6f}")
-
-
-# MPI.Finalize()
