@@ -2,6 +2,7 @@
 
 """
 Monte Carlo Simulation with MPI for volume estimation and gaussian integration.
+
 Class file.
 
 Licensed under the MIT License. See the LICENSE file in the repository for details.

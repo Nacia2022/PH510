@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
 """
 Monte Carlo Simulation with MPI for volume estimation and gaussian integration.
+
 Tests file.
 
 Licensed under the MIT License. See the LICENSE file in the repository for details.
 
 """
+
 import time
 from mpi4py import MPI
 import task3_code as mc
