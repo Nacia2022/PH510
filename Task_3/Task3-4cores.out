@@ -1,0 +1,68 @@
+===================================================================================
+SLURM Job ID:            11956990
+Submit time:             Thu Mar 27 15:03:27 GMT 2025 (Unix Epoch time: 1743087807)
+Start time:              Thu Mar 27 15:03:44 GMT 2025 (Unix Epoch time: 1743087824)
+No. nodes:               1
+No. tasks:               4
+Job name:                Task3
+Account:                 teaching
+QoS:                     teaching
+Partition (queue):       teaching
+Submit directory:        /users/qnb20123/PH510/PH510/Task_3
+Script name:             /users/qnb20123/PH510/PH510/Task_3/Task3.sh
+Master node:             wee15
+Nodes used:              wee15
+Task distribution:       
+===================================================================================
+
+************* Module task3_code
+task3_code.py:87:4: R0914: Too many local variables (18/15) (too-many-locals)
+
+------------------------------------------------------------------
+Your code has been rated at 9.80/10 (previous run: 9.80/10, +0.00)
+
+Start calculation for volume of hyperspaces:
+Estimated volume in 2D: 3.139492 error: 0.001644
+Estimated volume in 3D: 4.186776 error: 0.003996
+Estimated volume in 4D: 4.929952 error: 0.007387
+Estimated volume in 5D: 5.251040 error: 0.011852
+Total time for N-ball Volume: 20.635642 seconds
+
+Dimensions: 1, Sigma: 0.5, x0: 0
+Integral: 1.001423 error: 0.000499
+Mean: 0.000371, Variance: 0.248884
+
+Dimensions: 1, Sigma: 0.5, x0: 3
+Integral: 0.999761 error: 0.000500
+Mean: 3.000757, Variance: 0.249548
+
+Dimensions: 1, Sigma: 2, x0: 0
+Integral: 0.999085 error: 0.002001
+Mean: 0.000842, Variance: 4.004600
+
+Dimensions: 1, Sigma: 2, x0: 3
+Integral: 0.995687 error: 0.002003
+Mean: 2.996679, Variance: 4.013148
+
+Dimensions: 6, Sigma: 0.5, x0: 0
+Integral: 0.792826 error: 0.000529
+Mean: -0.077647, Variance: 0.279468
+
+Dimensions: 6, Sigma: 0.5, x0: 3
+Integral: 1.280110 error: 0.000446
+Mean: 2.979949, Variance: 0.199039
+
+Dimensions: 6, Sigma: 2, x0: 0
+Integral: 1.047165 error: 0.002004
+Mean: -0.072018, Variance: 4.017701
+
+Dimensions: 6, Sigma: 2, x0: 3
+Integral: 1.149483 error: 0.001902
+Mean: 3.068364, Variance: 3.617083
+
+Total time for Gaussian: 0.298154 seconds
+===================================================================================
+SLURM job 11956990 ended:     Thu Mar 27 15:04:12 GMT 2025 (Unix Epoch time: 1743087852)
+This is an estimated end time using the 'date' command from node wee15.hpc.strath.ac.uk
+For accurate timings, use 'sacct -j 11956990 -X --format=Submit,Start,End,Elapsed'
+======================================================================================
