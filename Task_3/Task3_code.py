@@ -1,11 +1,10 @@
 #!/bin/python3
 
 """
-Created on Mon Mar 3 16:09:34 2025
+Monte Carlo Simulation with MPI for volume estimation and gaussian integration.
+Class file.
 
-@author: natalia
-
-Licensed and Copyrighted 2025.
+Licensed under the MIT License. See the LICENSE file in the repository for details.
 
 """
 
@@ -22,6 +21,7 @@ class MonteCarlo:
     """
 
     def __init__(self, seed=None):
+        # Initialize MPI communication
         self.comm = MPI.COMM_WORLD
         self.rank = self.comm.Get_rank()
         self.size = self.comm.Get_size()
@@ -38,9 +38,8 @@ class MonteCarlo:
 
         self.rng = np.random.default_rng(new_seed)
 
-        # Generate random numbers
     def gen_ran_num(self, count=5):
-        """Generate random numbers."""
+        """Generate a list ofrandom numbers."""
         return self.rng.random(count)
 
     def mc_volume(self, dimensions, sample_num=1000000):
@@ -51,7 +50,7 @@ class MonteCarlo:
         for _ in range(sample_num // self.size):
             point = self.rng.uniform(-1, 1, dimensions)  # Create a random point in cube of n-dim
             if np.linalg.norm(point) <= 1:  # Distance from center
-                count += 1  # If in spphere increase count
+                count += 1  # If in sphere increase count
 
         # Reduce results - sum the results from all processes in rank 0 (root process)
         total = self.comm.reduce(count, op=MPI.SUM, root=0)
@@ -109,7 +108,6 @@ class MonteCarlo:
         local_int = np.sum(values)
         local_mean = np.sum(samples * values[:, np.newaxis], axis=0)  # x*f(x)
         local_mean_sq = np.sum((samples**2) * values[:, np.newaxis], axis=0)  # x**2*f(x))
-        # local_sum_sq = np.sum(values ** 2)
 
         # Reduce all sums at rank 0.
         total_int = self.comm.reduce(local_int, op=MPI.SUM, root=0)

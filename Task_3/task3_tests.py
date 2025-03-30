@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Mon Mar 24 15:07:16 2025
+Monte Carlo Simulation with MPI for volume estimation and gaussian integration.
+Tests file.
 
-@author: natalia
-
-Licensed and Copyrighted 2025.
+Licensed under the MIT License. See the LICENSE file in the repository for details.
 
 """
 import time
