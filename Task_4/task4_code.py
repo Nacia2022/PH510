@@ -104,3 +104,51 @@ class MonteCarlo:
             
         
 # Relaxation/ Over-relaxarion solver
+def relaxation(grid_size, space, charge, boundary_cond, omega=1.8, iters=1000, tol=1e-5):
+    """
+    
+
+    Parameters
+    ----------
+    grid_size : TYPE
+        DESCRIPTION.
+    space : TYPE
+        DESCRIPTION.
+    charge : TYPE
+        DESCRIPTION.
+    boundary_cond : TYPE
+        DESCRIPTION.
+    omega : TYPE, optional
+        DESCRIPTION. The default is 1.8.
+    iters : TYPE, optional
+        DESCRIPTION. The default is 1000.
+    tol : TYPE, optional
+        DESCRIPTION. The default is 1e-5.
+
+    Returns
+    -------
+    None.
+
+    """
+    phi = np.zeros((grid_size, grid_size))
+    
+    # Set boundary conditions
+    phi[0, :] = boundary_cond["top"]
+    phi[-1, :] = boundary_cond["bottom"]
+    phi[:, 0] = boundary_cond["left"]
+    phi[:, -1] = boundary_cond["right"]
+    
+    for _ in range(iters):
+        old_phi = phi.copy()
+    #
+        for i in range(1, grid_size -1):
+            for j in range(1, grid_size -1):
+                phi[i, j] = omega * (charge[i, j] * space **2 + (phi[i+1, j]+ phi[i-1, j]
+                    + phi[i, j+1] + phi[i, j-1])/4) + (1 - omega) * old_phi[i, j]
+                
+        # Check
+        if np.max(np.abs(phi - old_phi)) < tol:
+            break
+        
+    return phi
+

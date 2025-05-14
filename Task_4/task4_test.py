@@ -38,6 +38,11 @@ def plot_results(phi, green):
     # ax[0].set_xlabel
     # ax[0].set_ylabel
     
+    pl2 = ax[1].imshow(phi, cmap='viridis', origin='lower')
+    # ax[0].set_title
+    # ax[0].set_xlabel
+    # ax[0].set_ylabel
+    
     plt.show
     
 def main():
@@ -66,17 +71,17 @@ def main():
     # Zero charge inside grid (f=0)
     grid_charge = np.zeros((grid_size, grid_size))
     
-    mc_solver = MonteCarlo(seed=71)
-    green_func = mc_solver.green(grid_size, start_xy, n_walkers)
+    mc = MonteCarlo(seed=71)
+    green_func = mc.green(grid_size, start_xy, n_walkers)
     
     # Ensure only rank 0 makes plot
     if MPI.COM_WORLD.Get_rank() == 0:
-        plot_results(green_func)
+        phi = mc.relaxation(grid_size, space, grid_charge, boundary_cond)
+        plot_results(green_func, phi)
         
-if __name__ == :"__main__"
+if __name__ == "__main__":
     main()
-    
-    
+
     
     
     
