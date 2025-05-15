@@ -56,9 +56,9 @@ class MonteCarlo:
         count_walkers = np.zeros((grid_size, grid_size))  # 2D array with zeros to record ammount of point visits
         x, y = start_xy
 
-        # Define edges of grid as boundary
-        boundary = [(0, i) for i in range(grid_size)] + [(grid_size - 1, i)for i in range(grid_size)] +\
-        [(i, 0) for i in range(grid_size)] + [(i, grid_size - 1)for i in range(grid_size)]
+        # # Define edges of grid as boundary
+        # boundary = [(0, i) for i in range(grid_size)] + [(grid_size - 1, i)for i in range(grid_size)] +\
+        # [(i, 0) for i in range(grid_size)] + [(i, grid_size - 1)for i in range(grid_size)]
         
         # Random walk until boundary, when boundary reached - end walk
         while (x, y) not in boundary:
@@ -70,7 +70,7 @@ class MonteCarlo:
                 x += 1
             elif step == "left" and y > 0:
                 y-= 1
-            elif step == "right" and y < 1:
+            elif step == "right" and y < grid_size - 1:
                 y += 1
             
         # Return count map of visited points
@@ -87,11 +87,15 @@ class MonteCarlo:
         """
         #Allocate walkers to processes
         loc_walkers = n_walkers // self.size
-        loc_count = np.zeros(grid_size, grid_size)
+        loc_count = np.zeros((grid_size, grid_size))
+        
+        # Define edges of grid as boundary
+        boundary = [(0, i) for i in range(grid_size)] + [(grid_size - 1, i)for i in range(grid_size)] +\
+        [(i, 0) for i in range(grid_size)] + [(i, grid_size - 1)for i in range(grid_size)]
         
         # 
         for _ in range(loc_walkers):
-            loc_count += self.rndm_walk(grid_size, start_xy)
+            loc_count += self.rndm_walk(grid_size, start_xy, boundary)
             
         # Combine in rank 0
         tot_count = self.comm.reduce(loc_count, op=MPI.SUM, root=0)
@@ -107,7 +111,6 @@ class MonteCarlo:
 def relaxation(grid_size, space, charge, boundary_cond, omega=1.8, iters=1000, tol=1e-5):
     """
     
-
     Parameters
     ----------
     grid_size : TYPE
@@ -148,6 +151,7 @@ def relaxation(grid_size, space, charge, boundary_cond, omega=1.8, iters=1000, t
                 
         # Check
         if np.max(np.abs(phi - old_phi)) < tol:
+        # if np.linalg.norm(phi - old_phi) < tol:
             break
         
     return phi
