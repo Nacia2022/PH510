@@ -53,17 +53,21 @@ class MonteCarlo:
         start_xy: Coordinates of start position (x,y)
         boundary: Grid coordinates set as boundary points
         """
-        count_walkers = np.zeros((grid_size, grid_size))  # 2D array with zeros to record ammount of point visits
+        # 2D array with zeros to record ammount of point visits
+        count_walkers = np.zeros((grid_size, grid_size))
         x_val, y_val = start_xy
 
         # # Define edges of grid as boundary
-        # boundary = [(0, i) for i in range(grid_size)] + [(grid_size - 1, i)for i in range(grid_size)] +\
+        # boundary = [(0, i) for i in range(grid_size)] +
+        # [(grid_size - 1, i)for i in range(grid_size)] +\
         # [(i, 0) for i in range(grid_size)] + [(i, grid_size - 1)for i in range(grid_size)]
 
         # Random walk until boundary, when boundary reached - end walk
         while (x_val, y_val) not in boundary:
             count_walkers[x_val, y_val] += 1  # Increment count for visits
-            step = self.rng.choice(["up", "down", "left", "right"])  # Use rng for random choice of direction
+
+            # Use rng for random choice of direction
+            step = self.rng.choice(["up", "down", "left", "right"])
             if step == "up" and x_val > 0:
                 x_val -= 1
             elif step == "down" and x_val < grid_size - 1:
@@ -90,8 +94,10 @@ class MonteCarlo:
         loc_count = np.zeros((grid_size, grid_size))
 
         # Define edges of grid as boundary
-        boundary = [(0, i) for i in range(grid_size)] + [(grid_size - 1, i)for i in range(grid_size)] +\
-        [(i, 0) for i in range(grid_size)] + [(i, grid_size - 1)for i in range(grid_size)]
+        boundary = [(0, i) for i in range(grid_size)] +\
+        [(grid_size - 1, i)for i in range(grid_size)] +\
+        [(i, 0) for i in range(grid_size)] +\
+        [(i, grid_size - 1)for i in range(grid_size)]
 
 
         for _ in range(loc_walkers):
