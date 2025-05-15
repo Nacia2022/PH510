@@ -114,8 +114,8 @@ class MonteCarlo:
 
 
 # Relaxation/ Over-relaxarion solver
-# def relaxation(grid_size, space, charge, boundary_cond, omega=1.8, iters=1000, tol=1e-5):
-def relaxation(param):
+# def relaxation(param):
+def relaxation(grid_size, space, charge, boundary_cond, omega=1.8, iters=1000, tol=1e-5):
     """
     Summarrize.
     
@@ -141,11 +141,12 @@ def relaxation(param):
     None.
 
     """
-    grid_size, space, charge, boundary_cond, omega, iters, tol = param
+    # grid_size, space, charge, boundary_cond, omega, iters, tol = param
+    # omega=1.8
+    # iters=1000
+    # tol=1e-5
+
     phi = np.zeros((grid_size, grid_size))
-    omega=1.8
-    iters=1000
-    tol=1e-5
 
     # Set boundary conditions
     phi[0, :] = boundary_cond["top"]
