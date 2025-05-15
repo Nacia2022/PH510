@@ -55,6 +55,54 @@ def units(x_cm, y_cm, grid_cm, n_val):
     leng = grid_cm / n_val  # Grid spacing
     return int(x_cm / leng), int(y_cm / leng)  # Conversion
 
+
+def run(grid_size, space, start_cm, boundary_cond, charge, n_walkers):
+    """
+    Use both Green's and relaxation methods to get the voltage at specific points.'
+
+    Parameters
+    ----------
+    grid_size : TYPE
+        DESCRIPTION.
+    space : TYPE
+        DESCRIPTION.
+    start_cm : TYPE
+        DESCRIPTION.
+    boundary_cond : TYPE
+        DESCRIPTION.
+    charge : TYPE
+        DESCRIPTION.
+    n_walkers : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    results : TYPE
+        DESCRIPTION.
+
+    """
+    grid_cm = 10
+    mc_solver = MonteCarlo(seed=71)
+    
+    results = []
+    for x_cm, y_cm in start_cm:
+        start_xy = units(x_cm, y_cm, grid_cm, grid_size)
+        green_f, stdv = mc_solver.green(grid_size, start_xy, n_walkers)
+
+        if MPI.COMM_WORLD.Get_rank() == 0:
+            phi = relaxation(grid_size, space, charge, boundary_cond)
+            poten = np.sum(green_f*charge)
+            results.append({
+                "point": (x_cm, y_cm),
+                "potential": poten,
+                "standard deviation": stdv,
+                "phi": phi,
+                "Green's function": green_f
+                })
+
+        return results
+    
+    
 def main():
     """
     Execute function for Monte Carlo: add parameters, compute and plot.
