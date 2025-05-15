@@ -86,7 +86,7 @@ def main():
 
     # Ensure only rank 0 makes plot
     if MPI.COMM_WORLD.Get_rank() == 0:
-        phi = relaxation(grid_size, space, charge, boundary_cond)
+        phi = relaxation(grid_size, space, charge, boundary_cond, 1.8, 1000, 1e-5)
         plot_results(green_func, phi)
 
 if __name__ == "__main__":
