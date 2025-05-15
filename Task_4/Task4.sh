@@ -48,6 +48,7 @@ module load openmpi/gcc-8.5.0/4.1.1
 
 # Add pylint score
 pylint --extension-pkg-allow-list=mpi4py.MPI task4_code.py
+pylint --extension-pkg-allow-list=mpi4py.MPI task4_test.py
 
 # Modify the line below to run your program
 mpirun -np $SLURM_NPROCS ./task4_test.py
