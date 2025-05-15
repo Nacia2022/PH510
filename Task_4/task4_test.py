@@ -44,7 +44,10 @@ def plot_results(phi, green):
     # ax[0].set_xlabel
     # ax[0].set_ylabel
 
-    plt.show()
+    # plt.show()  # Can be used but not through ThinLinc
+    # Have to save plot rather than show when running via jobscript
+    plt.savefig("greens.png", dpi=300)
+    print("Saved Green's function plot as image.")
 
 
 def units(x_cm, y_cm, grid_cm, n_val):
