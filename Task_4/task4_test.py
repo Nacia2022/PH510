@@ -102,7 +102,40 @@ def run(grid_size, space, start_cm, boundary_cond, charge, n_walkers):
 
         return results
     
-    
+
+def charge_dist(grid_size, mode="zero"):
+    """
+    Define charge distribution across the grid.
+
+    Parameters
+    ----------
+    grid_size : TYPE
+        DESCRIPTION.
+    mode : Tell function how to fill grid. The default is "zero".
+
+    Returns
+    -------
+    TYPE
+        DESCRIPTION.
+
+    """
+    if mode == "zero":  # Fill grid with 0s - no charge anywhere
+        return np.zeros((grid_size, grid_size))
+    elif mode == "uniform":  # Fill grid with same value everywhere
+        return np.full((grid_size, grid_size), 10.0 / (grid_size**2))
+    elif mode == "gradient":  # Gradient charge from 1 to 0 (same charge in every row)
+        return np.title(np.linspace(1, 0, grid_size).reshape((grid_size, 1)), (1, grid_size))
+    elif mode == "exponential":  # Exponential decay with highest charge in center
+        charge = np.zeros((grid_size, grid_size))
+        center = grid_size // 2
+        for i in range(grid_size, grid_size):
+            for j in range(grid_size):
+                r = np.sqrt((i - center) **2 + (j - center)**2)
+                charge[i, j] = np.exp(-2000*r / grid_size)
+            return charge
+        
+        
+        
 def main():
     """
     Execute function for Monte Carlo: add parameters, compute and plot.
@@ -116,26 +149,47 @@ def main():
     grid_size = 100  # In cm
     space = 0.001
     n_walkers = 1000
-    start_xy = (50, 50)  # Start at center
+    # start_xy = (50, 50)  # Start at center
+    start_cm = [(5, 5), (2.5, 2.5), (0.1, 2.5), (0.1, 0.1)]
 
-    # Set potentials for boundaries
-    boundary_cond = {
-        "top": np.full(grid_size, 1.0),  # Return array of grid size, filled with +1V
-        "bottom": np.full(grid_size, -1.0),  # Return array of grid size, filled with -1V
-        "left": np.full(grid_size, 2.0),  # Return array of grid size, filled with +2V
-        "right": np.full(grid_size, 4.0)  # Return array of grid size, filled with +4V
-    }
+    # Set potentials for boundaries (various)
+    boundaries = [
+        {"top": np.full(grid_size, 1.0),  # All egdes uniformally at +1V
+         "bottom": np.full(grid_size, 1.0),  
+         "left": np.full(grid_size, 1.0),  
+         "right": np.full(grid_size, 1.0)},
+
+        {"top": np.full(grid_size, 1.0),
+        "bottom": np.full(grid_size, 1.0),
+        "left": np.full(grid_size, -1.0),
+        "right": np.full(grid_size, -1.0)},
+
+        {"top": np.full(grid_size, 2.0),
+        "bottom": np.full(grid_size, 0),
+        "left": np.full(grid_size, 2.0),
+        "right": np.full(grid_size, -4.0)},
+    ]
+    
+    modes = ["zero", "uniform", "gradient", "exponential"]
 
     # Zero charge inside grid (f=0)
     charge = np.zeros((grid_size, grid_size))
 
     mc_solver = MonteCarlo(seed=71)
-    green_func = mc_solver.green(grid_size, start_xy, n_walkers)
+    # green_func = mc_solver.green(grid_size, start_xy, n_walkers)
 
-    # Ensure only rank 0 makes plot
+    # if MPI.COMM_WORLD.Get_rank() == 0:
+    #     phi = relaxation(grid_size, space, charge, boundary_cond, 1.8, 1000, 1e-5)
+    #     plot_results(green_func, phi)
+    
     if MPI.COMM_WORLD.Get_rank() == 0:
-        phi = relaxation(grid_size, space, charge, boundary_cond, 1.8, 1000, 1e-5)
-        plot_results(green_func, phi)
+        for indx_boundary, boundary_cond in enumerate(boundaries):
+            for indx_charge, mode in enumerate(modes):
+                charge = charge_dist(grid_size, mode)
+                results = run(grid_size, space, start_cm, boundary_cond, charge, n_walkers)
+                for r in results:
+                    print(f"Boundary type: {indx_boundary+1}, Charge {mode}, Point {r['point']}, Potential: {r['potential']:.5f}, Standard deviation: {r['stdv']:.5e}")
+        
 
 if __name__ == "__main__":
     main()
