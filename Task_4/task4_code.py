@@ -42,8 +42,8 @@ class MonteCarlo:
         # Else for no provided seed - get numpy to generate a radom seed.
 
         self.rng = np.random.default_rng(new_seed)
-        
-        
+
+
     def rndm_walk(self, grid_size, start_xy, boundary):
         """Estimate Green's function using random walks.
         
@@ -54,27 +54,27 @@ class MonteCarlo:
         boundary: Grid coordinates set as boundary points
         """
         count_walkers = np.zeros((grid_size, grid_size))  # 2D array with zeros to record ammount of point visits
-        x, y = start_xy
+        x_val, y_val = start_xy
 
         # # Define edges of grid as boundary
         # boundary = [(0, i) for i in range(grid_size)] + [(grid_size - 1, i)for i in range(grid_size)] +\
         # [(i, 0) for i in range(grid_size)] + [(i, grid_size - 1)for i in range(grid_size)]
-        
+
         # Random walk until boundary, when boundary reached - end walk
-        while (x, y) not in boundary:
-            count_walkers[x,y] += 1  # Increment count for visits
+        while (x_val, y_val) not in boundary:
+            count_walkers[x_val, y_val] += 1  # Increment count for visits
             step = self.rng.choice(["up", "down", "left", "right"])  # Use rng for random choice of direction
-            if step == "up" and x > 0:
-                x -= 1
-            elif step == "down" and x < grid_size - 1:
-                x += 1
-            elif step == "left" and y > 0:
-                y-= 1
-            elif step == "right" and y < grid_size - 1:
-                y += 1
-            
+            if step == "up" and x_val > 0:
+                x_val -= 1
+            elif step == "down" and x_val < grid_size - 1:
+                x_val += 1
+            elif step == "left" and y_val > 0:
+                y_val -= 1
+            elif step == "right" and y_val < grid_size - 1:
+                y_val += 1
+
         # Return count map of visited points
-        count_walkers[x, y] += 1
+        count_walkers[x_val, y_val] += 1
         return count_walkers
 
 
@@ -88,25 +88,25 @@ class MonteCarlo:
         #Allocate walkers to processes
         loc_walkers = n_walkers // self.size
         loc_count = np.zeros((grid_size, grid_size))
-        
+
         # Define edges of grid as boundary
         boundary = [(0, i) for i in range(grid_size)] + [(grid_size - 1, i)for i in range(grid_size)] +\
         [(i, 0) for i in range(grid_size)] + [(i, grid_size - 1)for i in range(grid_size)]
-        
-        # 
+
+
         for _ in range(loc_walkers):
             loc_count += self.rndm_walk(grid_size, start_xy, boundary)
-            
+
         # Combine in rank 0
         tot_count = self.comm.reduce(loc_count, op=MPI.SUM, root=0)
-        
+
         # Return Green's function from rank 0 and nothing from other ranks
         if self.rank == 0:
             green = tot_count / n_walkers
             return green
         return None
-            
-        
+
+
 # Relaxation/ Over-relaxarion solver
 def relaxation(grid_size, space, charge, boundary_cond, omega=1.8, iters=1000, tol=1e-5):
     """
@@ -134,13 +134,13 @@ def relaxation(grid_size, space, charge, boundary_cond, omega=1.8, iters=1000, t
 
     """
     phi = np.zeros((grid_size, grid_size))
-    
+
     # Set boundary conditions
     phi[0, :] = boundary_cond["top"]
     phi[-1, :] = boundary_cond["bottom"]
     phi[:, 0] = boundary_cond["left"]
     phi[:, -1] = boundary_cond["right"]
-    
+
     for _ in range(iters):
         old_phi = phi.copy()
     #
@@ -148,11 +148,10 @@ def relaxation(grid_size, space, charge, boundary_cond, omega=1.8, iters=1000, t
             for j in range(1, grid_size -1):
                 phi[i, j] = omega * (charge[i, j] * space **2 + (phi[i+1, j]+ phi[i-1, j]
                     + phi[i, j+1] + phi[i, j-1])/4) + (1 - omega) * old_phi[i, j]
-                
+
         # Check
         if np.max(np.abs(phi - old_phi)) < tol:
         # if np.linalg.norm(phi - old_phi) < tol:
             break
-        
-    return phi
 
+    return phi
