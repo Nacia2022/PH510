@@ -1,0 +1,42 @@
+===================================================================================
+SLURM Job ID:            12070274
+Submit time:             Thu May 15 12:35:34 BST 2025 (Unix Epoch time: 1747308934)
+Start time:              Thu May 15 12:35:45 BST 2025 (Unix Epoch time: 1747308945)
+No. nodes:               1
+No. tasks:               8
+Job name:                Task4
+Account:                 teaching
+QoS:                     teaching
+Partition (queue):       teaching
+Submit directory:        /users/qnb20123/PH510/PH510/Task_4
+Script name:             /users/qnb20123/PH510/PH510/Task_4/Task4.sh
+Master node:             wee12
+Nodes used:              wee12
+Task distribution:       
+===================================================================================
+
+************* Module task4_code
+task4_code.py:56:0: C0301: Line too long (113/100) (line-too-long)
+task4_code.py:60:0: C0301: Line too long (106/100) (line-too-long)
+task4_code.py:66:0: C0301: Line too long (109/100) (line-too-long)
+task4_code.py:93:0: C0301: Line too long (104/100) (line-too-long)
+task4_code.py:111:0: R0913: Too many arguments (7/5) (too-many-arguments)
+task4_code.py:111:0: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
+
+------------------------------------------------------------------
+Your code has been rated at 8.85/10 (previous run: 8.85/10, +0.00)
+
+************* Module task4_test
+task4_test.py:36:4: W0612: Unused variable 'fig' (unused-variable)
+task4_test.py:37:4: W0612: Unused variable 'pl1' (unused-variable)
+task4_test.py:42:4: W0612: Unused variable 'pl2' (unused-variable)
+
+------------------------------------------------------------------
+Your code has been rated at 9.03/10 (previous run: 9.00/10, +0.03)
+
+Saved Green's function plot as image.
+===================================================================================
+SLURM job 12070274 ended:     Thu May 15 12:34:18 BST 2025 (Unix Epoch time: 1747308858)
+This is an estimated end time using the 'date' command from node wee12.hpc.strath.ac.uk
+For accurate timings, use 'sacct -j 12070274 -X --format=Submit,Start,End,Elapsed'
+======================================================================================
