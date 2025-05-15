@@ -109,8 +109,9 @@ class MonteCarlo:
         # Return Green's function from rank 0 and nothing from other ranks
         if self.rank == 0:
             green = tot_count / n_walkers
-            return green
-        return None
+            stdv = np.sqrt(green * (1 - green) / n_walkers)
+            return green, stdv
+        return None, None
 
 
 # Relaxation/ Over-relaxarion solver

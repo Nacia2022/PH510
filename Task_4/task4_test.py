@@ -40,9 +40,10 @@ def plot_results(phi, green):
     ax1.set_ylabel("y")
 
     pl2 = ax2.imshow(phi, cmap='viridis', origin='lower')
-    # ax[0].set_title
-    # ax[0].set_xlabel
-    # ax[0].set_ylabel
+    ax2.set_title("Phi")
+    ax2.set_xlabel("x")
+    ax2.set_ylabel("y")
+
 
     # plt.show()  # Can be used but not through ThinLinc
     # Have to save plot rather than show when running via jobscript
@@ -83,19 +84,19 @@ def run(grid_size, space, start_cm, boundary_cond, charge, n_walkers):
     """
     grid_cm = 10
     mc_solver = MonteCarlo(seed=71)
-    
     results = []
+
     for x_cm, y_cm in start_cm:
         start_xy = units(x_cm, y_cm, grid_cm, grid_size)
         green_f, stdv = mc_solver.green(grid_size, start_xy, n_walkers)
 
         if MPI.COMM_WORLD.Get_rank() == 0:
             phi = relaxation(grid_size, space, charge, boundary_cond)
-            poten = np.sum(green_f*charge)
+            poten = np.sum(green_f*charge) * space**2
             results.append({
                 "point": (x_cm, y_cm),
                 "potential": poten,
-                "standard deviation": stdv,
+                "standard deviation": np.mean(stdv),
                 "phi": phi,
                 "Green's function": green_f
                 })
@@ -133,9 +134,38 @@ def charge_dist(grid_size, mode="zero"):
                 r = np.sqrt((i - center) **2 + (j - center)**2)
                 charge[i, j] = np.exp(-2000*r / grid_size)
             return charge
-        
-        
-        
+    """
+    Define charge distribution across the grid.
+
+    Parameters
+    ----------
+    grid_size : TYPE
+        DESCRIPTION.
+    mode : Tell function how to fill grid. The default is "zero".
+
+    Returns
+    -------
+    TYPE
+        DESCRIPTION.
+
+    """
+    if mode == "zero":  # Fill grid with 0s - no charge anywhere
+        return np.zeros((grid_size, grid_size))
+    elif mode == "uniform":  # Fill grid with same value everywhere
+        return np.full((grid_size, grid_size), 10.0 / (grid_size**2))
+    elif mode == "gradient":  # Gradient charge from 1 to 0 (same charge in every row)
+        return np.tile(np.linspace(1, 0, grid_size).reshape((grid_size, 1)), (1, grid_size))
+    elif mode == "exponential":  # Exponential decay with highest charge in center
+        charge = np.zeros((grid_size, grid_size))
+        center = grid_size // 2
+        for i in range(grid_size):
+            for j in range(grid_size):
+                r = np.sqrt((i - center)**2 + (j - center)**2)
+                charge[i, j] = np.exp(-2000 * r / grid_size)
+            return charge
+
+
+
 def main():
     """
     Execute function for Monte Carlo: add parameters, compute and plot.
@@ -147,7 +177,7 @@ def main():
     """
     # Parameters
     grid_size = 100  # In cm
-    space = 0.001
+    space = 10 / grid_size
     n_walkers = 1000
     # start_xy = (50, 50)  # Start at center
     start_cm = [(5, 5), (2.5, 2.5), (0.1, 2.5), (0.1, 0.1)]
@@ -160,22 +190,22 @@ def main():
          "right": np.full(grid_size, 1.0)},
 
         {"top": np.full(grid_size, 1.0),
-        "bottom": np.full(grid_size, 1.0),
-        "left": np.full(grid_size, -1.0),
-        "right": np.full(grid_size, -1.0)},
+         "bottom": np.full(grid_size, 1.0),
+         "left": np.full(grid_size, -1.0),
+         "right": np.full(grid_size, -1.0)},
 
         {"top": np.full(grid_size, 2.0),
-        "bottom": np.full(grid_size, 0),
-        "left": np.full(grid_size, 2.0),
-        "right": np.full(grid_size, -4.0)},
+         "bottom": np.full(grid_size, 0),
+         "left": np.full(grid_size, 2.0),
+         "right": np.full(grid_size, -4.0)},
     ]
     
     modes = ["zero", "uniform", "gradient", "exponential"]
 
     # Zero charge inside grid (f=0)
-    charge = np.zeros((grid_size, grid_size))
+    # charge = np.zeros((grid_size, grid_size))
 
-    mc_solver = MonteCarlo(seed=71)
+    # mc_solver = MonteCarlo(seed=71)
     # green_func = mc_solver.green(grid_size, start_xy, n_walkers)
 
     # if MPI.COMM_WORLD.Get_rank() == 0:
