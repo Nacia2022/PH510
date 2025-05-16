@@ -4,7 +4,7 @@
 """
 Monte Carlo evaluation of Green's functions.
 
-Class file.
+Test file.
 
 Copyright [2025] Natalia Kozioł.
 Licensed under the MIT License. See the LICENSE file in the repository for details.
