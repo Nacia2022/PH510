@@ -23,11 +23,11 @@ class MonteCarlo:
 
     Get the process rank and the total number of processes.
     """
-    
+
     def __init__(self, grid_size, n_walks=100000, seed=None):
         self.n = grid_size
         self.n_walks = n_walks
-        
+
         # Initialize MPI communication
         self.comm = MPI.COMM_WORLD
         self.rank = self.comm.Get_rank()
@@ -44,17 +44,17 @@ class MonteCarlo:
         # Else for no provided seed - get numpy to generate a radom seed.
 
         self.rng = np.random.default_rng(new_seed)
-        
+
         # Probability grid
         self.prob_grid = np.zeros((self.n, self.n))
-        self.site_visits = np.zeroes((self.n, self.n))
-        
-        def boundary_check(self, i, j):
-            """Check whether walker has reached boundary."""
-            return i == 0 or j == 0 or i == self.n-1 or j == self.n - 1
+        self.visits = np.zeros((self.n, self.n))
+
+    def boundary_check(self, x_val, y_val):
+        """Check whether walker has reached boundary."""
+        return x_val == 0 or y_val == 0 or x_val == self.n-1 or y_val == self.n - 1
 
 
-    def rndm_walk(self, int_i, int_j):
+    def rndm_walk(self, int_x, int_y):
         """Perform random walks, return probability of encountering boundary.
         
         Randomly move around a 2D grid until it hits a boundary.
@@ -63,114 +63,149 @@ class MonteCarlo:
         start_xy: Coordinates of start position (x,y)
         boundary: Grid coordinates set as boundary points
         """
+        #Allocate walkers to processes
+        loc_walks = self.n_walks // self.size
+        n_hits = {(x_val, y_val): 0 for x_val in range(self.n) for y_val in [0, self.n -1]}
+        n_hits.update({(x_val, y_val): 0 for y_val in range(self.n) for x_val in [0, self.n -1]})
+        # loc_count = np.zeros((grid_size, grid_size))
+
         # 2D array with zeros to record ammount of point visits
-        count_walkers = np.zeros((grid_size, grid_size))
-        x_val, y_val = start_xy
+        # count_walkers = np.zeros((grid_size, grid_size))
+        # x_val, y_val = start_xy
 
-        # Random walk until boundary, when boundary reached - end walk
-        while (x_val, y_val) not in boundary:
-            count_walkers[x_val, y_val] += 1  # Increment count for visits
+        for _ in range(loc_walks):
+            x_val, y_val = int_x, int_y
+            while not self.boundary_check(x_val, y_val):
+                self.visits[x_val, y_val] += 1
+                # Use rng for random choice of direction
+                step = self.rng.choice(["up", "down", "left", "right"])
+                if step == "up": x_val += 1
+                elif step == "down": x_val -= 1
+                elif step == "left": y_val -= 1
+                elif step == "right": y_val += 1
+            n_hits[(x_val, y_val)] += 1
 
-            # Use rng for random choice of direction
-            step = self.rng.choice(["up", "down", "left", "right"])
-            if step == "up" and x_val > 0:
-                x_val -= 1
-            elif step == "down" and x_val < grid_size - 1:
-                x_val += 1
-            elif step == "left" and y_val > 0:
-                y_val -= 1
-            elif step == "right" and y_val < grid_size - 1:
-                y_val += 1
+        tot_n_hits = self.comm.reduce(n_hits, op=MPI.SUM, root=0)
+        tot_visits = self.comm.reduce(self.visits, op=MPI.SUM, root=0)
 
-        # Return count map of visited points
-        count_walkers[x_val, y_val] += 1
-        return count_walkers
+        if self.rank == 0:
+            for (x_val, y_val), count in tot_n_hits.items():
+                self.prob_grid[x_val, y_val] = count / self.n_walks
+            return self.prob_grid, tot_visits
+        return None, None
 
 
-    def green(self, grid_size, start_xy, n_walkers):
+    def green(self, int_x, int_y, space):
         """Use Monte Carlo walks to estimate Green's function.
 
         Allocate walkers across MPI processes. Each process runs a part of the walkers.
         Results combined in rank 0.
         Return 2D array accumulated at rank 0 for normalized Green's function.
-        """
-        #Allocate walkers to processes
-        loc_walkers = n_walkers // self.size
-        loc_count = np.zeros((grid_size, grid_size))
-
-        # Define edges of grid as boundary
-        boundary = [(0, i) for i in range(grid_size)] +\
-        [(grid_size - 1, i)for i in range(grid_size)] +\
-        [(i, 0) for i in range(grid_size)] +\
-        [(i, grid_size - 1)for i in range(grid_size)]
-
-
-        for _ in range(loc_walkers):
-            loc_count += self.rndm_walk(grid_size, start_xy, boundary)
-
-        # Combine in rank 0
-        tot_count = self.comm.reduce(loc_count, op=MPI.SUM, root=0)
-
-        # Return Green's function from rank 0 and nothing from other ranks
+        """ 
         if self.rank == 0:
-            green = tot_count / n_walkers
-            stdv = np.sqrt(green * (1 - green) / n_walkers)
-            return green, stdv
-        return None, None
+            prob_grid, visits = self.rndm_walk(int_x, int_y)
+            return (space**2 / self.n_walks) * visits 
+        return None
 
 
-# Relaxation/ Over-relaxarion solver
-# def relaxation(param):
-def relaxation(grid_size, space, charge, boundary_cond, omega=1.8, iters=1000, tol=1e-5):
-    """
-    Summarrize.
+    def compute_green(self, x_val ,y_val):
+        """Compute green's function."""
+        return self.green(x_val, y_val, space=1.0)
+
+
+class Poissan:
+    """Class for solver."""
+
+    def __init__(self, length, n_points, seed=None):
+        """Initialize."""
+        self.l = length
+        self.n = n_points
+        self.h = self.l / (self.n - 1)
+        self.phi = np.zeros((self.n, self.n))
+        self.f = np.zeros((self.n, self.n))
+        self.fixed_potential = set()
+        self.fixed_charge = set()
+
+        self.mc_solver = MonteCarlo(self.n, seed=seed)
+
+    def boundary_cond(self, type):
+        """Use diffrent types of boundary conditions specified in task4 a-b."""
+        if type == "uniform":
+            self.phi[:, :] = 0
+            self.phi[0, :] = 1
+            self.phi[-1, :] = 1
+            self.phi[:, 0] = 1
+            self.phi[:, -1] = 1
+
+        if type == "alternating":
+            self.phi[:, :] = 0
+            self.phi[0, :] = 1
+            self.phi[-1, :] = 1
+            self.phi[:, 0] = -1
+            self.phi[:, -1] = -1
+
+        if type == "mixed":
+            self.phi[:, :] = 0
+            self.phi[0, :] = 2
+            self.phi[-1, :] = 0
+            self.phi[:, 0] = 2
+            self.phi[:, -1] = -4
+
+        else:
+            raise ValueError("Invalid condition type")
+
+        for i in range(self.n):
+            self.fixed_potential.add((self.n - 1, i))
+            self.fixed_potential.add((i, self.n - 1))
+            self.fixed_potential.add((0, i))
+            self.fixed_potential.add((i, 0))
+            
+        return self.phi
     
-    Parameters
-    ----------
-    grid_size : TYPE
-        DESCRIPTION.
-    space : TYPE
-        DESCRIPTION.
-    charge : TYPE
-        DESCRIPTION.
-    boundary_cond : TYPE
-        DESCRIPTION.
-    omega : TYPE, optional
-        DESCRIPTION. The default is 1.8.
-    iters : TYPE, optional
-        DESCRIPTION. The default is 1000.
-    tol : TYPE, optional
-        DESCRIPTION. The default is 1e-5.
+    def charge(self, mode):
+        """Distribute charge in diffrent modes."""
+        x_val, y_val =np.meshgrid(np.linspace(0, self.l, self.n), np.linspace(0, self.l, self.n))
 
-    Returns
-    -------
-    None.
+        if mode == "uniform":  # Fill grid with same value everywhere
+            self.f[:, :] = 10
 
-    """
-    # grid_size, space, charge, boundary_cond, omega, iters, tol = param
-    # omega=1.8
-    # iters=1000
-    # tol=1e-5
+        elif mode == "gradient":  # Gradient charge from 1 to 0 (same charge in every row)
+            self.f[:, :] = np.linspace(1, 0, self.n)[:, np.newaxis]
 
-    phi = np.zeros((grid_size, grid_size))
+        elif mode == "exponential":  # Exponential decay with highest charge in center
+            r = np.sqrt((x_val - self.l / 2)**2 + (y_val - self.l / 2)**2)
+            self.f[:, :] = np.exp(-2000 * np.abs(r))
 
-    # Set boundary conditions
-    phi[0, :] = boundary_cond["top"]
-    phi[-1, :] = boundary_cond["bottom"]
-    phi[:, 0] = boundary_cond["left"]
-    phi[:, -1] = boundary_cond["right"]
+        return self.f
 
-    for _ in range(iters):
-        old_phi = phi.copy()
-    #
-        for i in range(1, grid_size -1):
-            for j in range(1, grid_size -1):
-                phi[i, j] = omega * (charge[i, j] * space **2 + (phi[i+1, j]+ phi[i-1, j]
-                    + phi[i, j+1] + phi[i, j-1])/4) + (1 - omega) * old_phi[i, j]
+              
+    def over_relaxation(self, iters=1000, tol=1e-5):
+        """Summarrize."""
+        omega = 2 / (1 + np.sin(np.pi / self.n))
+        
+        for _ in range(iters):
+            max_delta = 0
+            for i in range(self.n):
+                for j in range(self.n):
+                    if (i, j ) in self.fixed_potential:
+                        continue
+                    neighbor = [self.phi[i + dx, j + dy] for dx, dy in [(-1,0), (1, 0), (0, -1), (0 ,1)]
+                                if 0 <= i + dx < self.n and 0 <= j + dy < self.n]
 
-        # Check
-        if np.max(np.abs(phi - old_phi)) < tol:
-        # if np.linalg.norm(phi - old_phi) < tol:
-            break
+                    new_phi = (0.25 * self.h**2 * self.f[i, j])+ np.mean(neighbor)
+                    max_delta = max(max_delta, abs(new_phi - self.phi[i, j]))
+                    self.phi[i ,j] = (omega * new_phi) + ((1 - omega) * self.phi[i, j])
+            if max_delta < tol:
+                break
+            
+    def compute_green_fun(self, x_val, y_val):
+        """Compuet function."""
+        return self.mc_solver.compute_green(x_val, y_val)
 
-    return phi
+
+
+
+
+
+
+
