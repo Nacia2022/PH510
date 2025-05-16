@@ -6,6 +6,7 @@ Monte Carlo evaluation of Green's functions.
 
 Class file.
 
+Copyright [2025] Natalia Kozioł.
 Licensed under the MIT License. See the LICENSE file in the repository for details.
 
 """
@@ -172,7 +173,7 @@ class Poissan:
 
 
     def over_relaxation(self, iters=1000, tol=1e-5):
-        """Summarrize."""
+        """Solve using over relaxation method."""
         omega = 2 / (1 + np.sin(np.pi / self.n))
 
         for _ in range(iters):
@@ -191,11 +192,11 @@ class Poissan:
                 break
 
     def compute_green_fun(self, x_val, y_val):
-        """Compuet function."""
+        """Compute function."""
         return self.mc_solver.compute_green(x_val, y_val)
 
     def evaluate_green(self, pt_list):
-        """Convert to cm and return results of green's function"""
+        """Convert to cm and return results of green's function."""
         convert_cm = lambda cm: int((cm / self.n) * (self.n - 1))
         results = {}
         for x_cm, y_cm in pt_list:
