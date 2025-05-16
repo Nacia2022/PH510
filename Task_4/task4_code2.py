@@ -67,14 +67,10 @@ class MonteCarlo:
         loc_walks = self.n_walks // self.size
         n_hits = {(x_val, y_val): 0 for x_val in range(self.n) for y_val in [0, self.n -1]}
         n_hits.update({(x_val, y_val): 0 for y_val in range(self.n) for x_val in [0, self.n -1]})
-        # loc_count = np.zeros((grid_size, grid_size))
-
-        # 2D array with zeros to record ammount of point visits
-        # count_walkers = np.zeros((grid_size, grid_size))
-        # x_val, y_val = start_xy
 
         for _ in range(loc_walks):
             x_val, y_val = int_x, int_y
+
             while not self.boundary_check(x_val, y_val):
                 self.visits[x_val, y_val] += 1
                 # Use rng for random choice of direction
@@ -96,15 +92,10 @@ class MonteCarlo:
 
 
     def green(self, int_x, int_y, space):
-        """Use Monte Carlo walks to estimate Green's function.
-
-        Allocate walkers across MPI processes. Each process runs a part of the walkers.
-        Results combined in rank 0.
-        Return 2D array accumulated at rank 0 for normalized Green's function.
-        """ 
+        """Use Monte Carlo walks to estimate Green's function."""
         if self.rank == 0:
             prob_grid, visits = self.rndm_walk(int_x, int_y)
-            return (space**2 / self.n_walks) * visits 
+            return (space**2 / self.n_walks) * visits
         return None
 
 
@@ -128,23 +119,23 @@ class Poissan:
 
         self.mc_solver = MonteCarlo(self.n, seed=seed)
 
-    def boundary_cond(self, type):
+    def boundary_cond(self, type_b):
         """Use diffrent types of boundary conditions specified in task4 a-b."""
-        if type == "uniform":
+        if type_b == "uniform":
             self.phi[:, :] = 0
             self.phi[0, :] = 1
             self.phi[-1, :] = 1
             self.phi[:, 0] = 1
             self.phi[:, -1] = 1
 
-        if type == "alternating":
+        if type_b == "alternating":
             self.phi[:, :] = 0
             self.phi[0, :] = 1
             self.phi[-1, :] = 1
             self.phi[:, 0] = -1
             self.phi[:, -1] = -1
 
-        if type == "mixed":
+        if type_b == "mixed":
             self.phi[:, :] = 0
             self.phi[0, :] = 2
             self.phi[-1, :] = 0
@@ -159,9 +150,10 @@ class Poissan:
             self.fixed_potential.add((i, self.n - 1))
             self.fixed_potential.add((0, i))
             self.fixed_potential.add((i, 0))
-            
+
         return self.phi
-    
+
+
     def charge(self, mode):
         """Distribute charge in diffrent modes."""
         x_val, y_val =np.meshgrid(np.linspace(0, self.l, self.n), np.linspace(0, self.l, self.n))
@@ -178,11 +170,11 @@ class Poissan:
 
         return self.f
 
-              
+
     def over_relaxation(self, iters=1000, tol=1e-5):
         """Summarrize."""
         omega = 2 / (1 + np.sin(np.pi / self.n))
-        
+
         for _ in range(iters):
             max_delta = 0
             for i in range(self.n):
@@ -197,15 +189,21 @@ class Poissan:
                     self.phi[i ,j] = (omega * new_phi) + ((1 - omega) * self.phi[i, j])
             if max_delta < tol:
                 break
-            
+
     def compute_green_fun(self, x_val, y_val):
         """Compuet function."""
         return self.mc_solver.compute_green(x_val, y_val)
 
-
-
-
-
-
-
-
+    def evaluate_green(self, pt_list):
+        """Convert to cm and return results of green's function"""
+        convert_cm = lambda cm: int((cm / self.n) * (self.n - 1))
+        results = {}
+        for x_cm, y_cm in pt_list:
+            x_idx = convert_cm(x_cm)
+            y_idx = convert_cm(y_cm)
+            greens = self.compute_green_fun(x_idx, y_idx)
+            if greens is not None:
+                val = greens[x_idx, y_idx]
+                stdv = np.std(greens)
+                results[(x_cm, y_cm)] = (val, stdv)
+            return results
